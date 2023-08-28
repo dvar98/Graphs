@@ -3,7 +3,7 @@ const graphData = {
     // Estructura de datos de los nodos y relaciones
     // Ejemplo:
     nodes: [
-        { id: 1, name: "Tarea 1", duration: 5, cost: 100, prerequisites: [], postrequisites: [2] },
+        { id: 0, name: "Tarea 1", duration: 5, cost: 100, prerequisites: [], postrequisites: [2] },
         { id: 2, name: "Tarea 2", duration: 3, cost: 50, prerequisites: [1], postrequisites: [3] },
         { id: 3, name: "Tarea 3", duration: 2, cost: 20, prerequisites: [2], postrequisites: [4] },
         { id: 4, name: "Tarea 4", duration: 4, cost: 80, prerequisites: [3], postrequisites: [5] },
