@@ -86,7 +86,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     nodeLabels
       .attr("x", d => d.x)
-      .attr("y", d => d.y);
+      .attr("y", d => d.y)
+      .attr("class", "invisible");
 
   });
 
