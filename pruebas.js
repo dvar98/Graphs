@@ -176,7 +176,40 @@ function updateVisualization() {
     simulation.force("link").links(graphData.links);
     simulation.alpha(1).restart();
   }
-    
+    // Configurar el evento click para agregar aristas
+const addEdgeButton = document.getElementById("add-edge-button");
+if (addEdgeButton) {
+  addEdgeButton.addEventListener("click", openEdgePopup);
+}
+
+function openEdgePopup() {
+  const sourceNodeId = prompt("Ingrese el ID del nodo de origen:");
+  const targetNodeId = prompt("Ingrese el ID del nodo de destino:");
+
+  const sourceNode = graphData.nodes.find(node => node.id === parseInt(sourceNodeId));
+  const targetNode = graphData.nodes.find(node => node.id === parseInt(targetNodeId));
+
+  if (sourceNode && targetNode) {
+    addLink(sourceNode, targetNode);
+  } else {
+    alert("Nodos no encontrados. Asegúrese de ingresar IDs válidos.");
+  }
+}
+
+// Función para agregar un enlace entre dos nodos
+function addLink(source, target) {
+  // Verificar si el enlace ya existe
+  const linkExists = graphData.links.some(link => {
+    return (link.source === source.id && link.target === target.id);
+  });
+
+  // Si no existe, agregarlo
+  if (!linkExists) {
+    graphData.links.push({ source: source.id, target: target.id });
+    updateVisualization();
+  }
+}
+     
 
 });
 
