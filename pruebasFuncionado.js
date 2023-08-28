@@ -3,12 +3,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Estructura de datos de los nodos y relaciones
     // Ejemplo:
     nodes: [
-      { id: 0, name: "0", duration: 5, cost: 100, prerequisites: [], postrequisites: [2] },
-      { id: 1, name: "1", duration: 3, cost: 50, prerequisites: [1], postrequisites: [3] },
-      { id: 2, name: "2", duration: 2, cost: 20, prerequisites: [2], postrequisites: [4] },
-      { id: 3, name: "3", duration: 4, cost: 80, prerequisites: [3], postrequisites: [5] },
-      { id: 4, name: "4", duration: 3, cost: 60, prerequisites: [4], postrequisites: [6] },
-      { id: 5, name: "5", duration: 2, cost: 40, prerequisites: [5], postrequisites: [] },
+      { id: 0, name: "0", duration: 5, cost: 100, prerequisites: [], postrequisites: [1] },
+      { id: 1, name: "1", duration: 3, cost: 50, prerequisites: [0], postrequisites: [2] },
+      { id: 2, name: "2", duration: 2, cost: 20, prerequisites: [1], postrequisites: [3] },
+      { id: 3, name: "3", duration: 4, cost: 80, prerequisites: [2], postrequisites: [4] },
+      { id: 4, name: "4", duration: 3, cost: 60, prerequisites: [3], postrequisites: [6] },
+      { id: 5, name: "5", duration: 2, cost: 40, prerequisites: [4], postrequisites: [] },
     ],
     links: [
       { source: 0, target: 1 },
@@ -167,7 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     nodes = nodes.enter().append("circle")
       .attr("r", 20)
-      .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")      .call(d3.drag()
+      .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")      
+      .call(d3.drag()
         .on("start", dragStarted)
         .on("drag", dragging)
         .on("end", dragEnded))
@@ -288,17 +289,4 @@ document.addEventListener("DOMContentLoaded", function () {
       tooltip.transition().duration(500).style("opacity", 0);
 
     });
-
-
 });
-
-
-
-
-
-
-
-
-
-
-
