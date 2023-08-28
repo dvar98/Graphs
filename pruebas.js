@@ -4,11 +4,11 @@ const graphData = {
     // Ejemplo:
     nodes: [
         { id: 0, name: "Tarea 1", duration: 5, cost: 100, prerequisites: [], postrequisites: [2] },
-        { id: 2, name: "Tarea 2", duration: 3, cost: 50, prerequisites: [1], postrequisites: [3] },
-        { id: 3, name: "Tarea 3", duration: 2, cost: 20, prerequisites: [2], postrequisites: [4] },
-        { id: 4, name: "Tarea 4", duration: 4, cost: 80, prerequisites: [3], postrequisites: [5] },
-        { id: 5, name: "Tarea 5", duration: 3, cost: 60, prerequisites: [4], postrequisites: [6] },
-        { id: 6, name: "Tarea 6", duration: 2, cost: 40, prerequisites: [5], postrequisites: [] },
+        { id: 1, name: "Tarea 2", duration: 3, cost: 50, prerequisites: [1], postrequisites: [3] },
+        { id: 2, name: "Tarea 3", duration: 2, cost: 20, prerequisites: [2], postrequisites: [4] },
+        { id: 3, name: "Tarea 4", duration: 4, cost: 80, prerequisites: [3], postrequisites: [5] },
+        { id: 4, name: "Tarea 5", duration: 3, cost: 60, prerequisites: [4], postrequisites: [6] },
+        { id: 5, name: "Tarea 6", duration: 2, cost: 40, prerequisites: [5], postrequisites: [] },
     ],
     links: [
         { source: 1, target: 2 },
