@@ -3,12 +3,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Estructura de datos de los nodos y relaciones
     // Ejemplo:
     nodes: [
-      { id: 0, name: "Tarea 1", duration: 5, cost: 100, prerequisites: [], postrequisites: [2] },
-      { id: 1, name: "Tarea 2", duration: 3, cost: 50, prerequisites: [1], postrequisites: [3] },
-      { id: 2, name: "Tarea 3", duration: 2, cost: 20, prerequisites: [2], postrequisites: [4] },
-      { id: 3, name: "Tarea 4", duration: 4, cost: 80, prerequisites: [3], postrequisites: [5] },
-      { id: 4, name: "Tarea 5", duration: 3, cost: 60, prerequisites: [4], postrequisites: [6] },
-      { id: 5, name: "Tarea 6", duration: 2, cost: 40, prerequisites: [5], postrequisites: [] },
+      { id: 0, name: "0", duration: 5, cost: 100, prerequisites: [], postrequisites: [2] },
+      { id: 1, name: "1", duration: 3, cost: 50, prerequisites: [1], postrequisites: [3] },
+      { id: 2, name: "2", duration: 2, cost: 20, prerequisites: [2], postrequisites: [4] },
+      { id: 3, name: "3", duration: 4, cost: 80, prerequisites: [3], postrequisites: [5] },
+      { id: 4, name: "4", duration: 3, cost: 60, prerequisites: [4], postrequisites: [6] },
+      { id: 5, name: "5", duration: 2, cost: 40, prerequisites: [5], postrequisites: [] },
     ],
     links: [
       { source: 0, target: 1 },
@@ -39,24 +39,25 @@ document.addEventListener("DOMContentLoaded", function () {
   let links = svg.selectAll("line")
     .data(graphData.links)
     .enter().append("line")
-    .attr("stroke", "#999")
-    .attr("stroke-width", 1);
+    .attr("stroke", "#666")
+    .attr("stroke-width", 3)
+    
 
   // Crear los nodos
   let nodes = svg.selectAll("circle")
     .data(graphData.nodes)
     .enter().append("circle")
     .attr("r", 10)
-    .attr("fill", "blue");
+    .attr("fill", "rgb(0, 100, 199)")
+    .attr("style","stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")
 
   // Agregar etiquetas a los nodos
   var nodeLabels = svg.selectAll(".node-label")
     .data(graphData.nodes)
     .enter().append("text")
     .attr("class", "node-label")
-    .text(d => d.name)
-    .attr("dx", 12)
-    .attr("dy", 4);
+    .text(d => d.id)
+    .attr("style", "text-anchor: middle; dominant-baseline: central; cursor: pointer; user-select: none; fill: white;");
 
   // Actualizar la simulación en cada fotograma
   simulation.on("tick", () => {
@@ -152,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     nodes = nodes.enter().append("circle")
       .attr("r", 10)
-      .attr("fill", "blue")
+      .attr("fill", "rgb(0, 100, 199)")
       .call(d3.drag()
         .on("start", dragStarted)
         .on("drag", dragging)
