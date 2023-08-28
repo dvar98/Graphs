@@ -323,6 +323,21 @@ nodes.on("mouseover", function(event, d) {
     tooltip.transition().duration(500).style("opacity", 0);
   });
 
+    // Mostar el tiempo total de la ruta de cada nodo enciam de los links
+    links.on("mouseover", function(event, d) {
+        // Muestra la información del nodo cuando el mouse está sobre él
+        const tooltip = d3.select("#tooltip");
+        tooltip.transition().duration(200).style("opacity", .9);
+        tooltip.html("Tiempo total de la ruta: " + d.target.duration + " días")
+          .style("left", (event.pageX) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+        .on("mouseout", function(d) {
+        // Oculta la información cuando el mouse sale del nodo
+        const tooltip = d3.select("#tooltip");
+        tooltip.transition().duration(500).style("opacity", 0);
+  
+  });
 
 });
 
