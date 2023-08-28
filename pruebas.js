@@ -35,21 +35,21 @@ const simulation = d3.forceSimulation(graphData.nodes)
   .force("center", d3.forceCenter(width / 2, height / 2));
 
 // Crear los enlaces (conexiones)
-const links = svg.selectAll("line")
+let links = svg.selectAll("line")
   .data(graphData.links)
   .enter().append("line")
   .attr("stroke", "#999")
   .attr("stroke-width", 1);
 
 // Crear los nodos
-const nodes = svg.selectAll("circle")
+let nodes = svg.selectAll("circle")
   .data(graphData.nodes)
   .enter().append("circle")
   .attr("r", 10)
   .attr("fill", "blue");
 
 // Agregar etiquetas a los nodos
-const nodeLabels = svg.selectAll(".node-label")
+var nodeLabels = svg.selectAll(".node-label")
   .data(graphData.nodes)
   .enter().append("text")
   .attr("class", "node-label")
@@ -154,8 +154,8 @@ function updateVisualization() {
         .on("start", dragStarted)
         .on("drag", dragging)
         .on("end", dragEnded))
-      .on("click", nodeClicked)
-      .on("contextmenu", nodeContextMenu) // Agregar menú contextual
+      // .on("click", nodeClicked)
+      // .on("contextmenu", nodeContextMenu) // Agregar menú contextual
       .merge(nodes); // Combinar nodos existentes y nuevos
   
     // Actualizar etiquetas de nodos existentes
