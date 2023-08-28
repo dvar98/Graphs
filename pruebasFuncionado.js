@@ -224,6 +224,42 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Configurar el evento click para mostrar los prerequisitos de un nodo y los postrequisitos
+  const showPrerequisitesAndPostrequisitesButton = document.getElementById("show-prerequisites-and-postrequisites-button");
+  if (showPrerequisitesAndPostrequisitesButton) {
+    showPrerequisitesAndPostrequisitesButton.addEventListener("click", showPrerequisitesAndPostrequisites);
+  }
+
+  //Funcion que muestre los prerequisitos de un nodo y los postrequisitos
+  function showPrerequisitesAndPostrequisites() {
+    let nodeId = prompt("Ingrese el ID del nodo:");
+    let node = graphData.nodes.find(node => node.id === parseInt(nodeId));
+
+    if (node) {
+      alert("Prerequisitos: " + node.prerequisites + "\nPostrequisitos: " + node.postrequisites);
+    } else {
+      alert("Nodo no encontrado. Asegúrese de ingresar un ID válido.");
+    }
+  }
+
+  // Configurar el evento click para mostrar el costo total de un nodo
+  const showTotalCostButton = document.getElementById("show-total-cost-button");
+  if (showTotalCostButton) {
+    showTotalCostButton.addEventListener("click", showTotalCost);
+  }
+
+  //Funcion que muestre el costo total de un nodo
+  function showTotalCost() {
+    let nodeId = prompt("Ingrese el ID del nodo:");
+    let node = graphData.nodes.find(node => node.id === parseInt(nodeId));
+
+    if (node) {
+      alert("Costo total: " + node.cost);
+    } else {
+      alert("Nodo no encontrado. Asegúrese de ingresar un ID válido.");
+    }
+  }
+
 
 });
 
