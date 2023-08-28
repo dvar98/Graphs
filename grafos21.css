@@ -1,7 +1,52 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #1f1d1d;
+  color: white;
+  padding: 30px;
+  font-size: 30px;
+}
+
+main {
+  max-width: 1400px;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 80px 0px;
+  margin: 0 auto;
+}
+
 #graph-container {
   width: 800px;
   height: 600px;
-  border: 1px solid #ccc;
+  border: 5px solid #1f1d1d;
+  border-radius: 15px;
+  margin-bottom: 40px;
+}
+
+.botones {
+  height: 600px;
+  ;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.boton {
+  width: 160px;
+  height: 70px;
+  font-size: 15px;
+  border: none;
+  border-radius: 10px;
+  background-color: #ff1808;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 0 #ccc, 0 2px 3px rgba(0, 0, 0, .4);
 }
 
 .tooltip {
@@ -17,4 +62,33 @@
 
 .invisible {
   pointer-events: none;
+}
+
+footer {
+  padding: 50px;
+  background-color: #1f1d1d;
+  color: white;
+  font-size: 22px;
+}
+
+#footer .credit {
+  margin: 20px 0;
+}
+
+footer>h2 {
+  font-size: 40px;
+}
+
+.integrantes {
+  margin-top: 30px;
+  padding-left: 20px;
+}
+
+.integrantes>p {
+  padding-bottom: 15px;
+}
+
+footer p a {
+  color: wheat;
+
 }
