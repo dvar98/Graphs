@@ -42,22 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .attr("stroke", "#666")
     .attr("stroke-width", 3)
 
-  // let linksLabels = svg.selectAll(".links-label")
-  //   .data(graphData.nodes)
-  //   .enter().append("text")
-  //   .attr("class", "links-label")
-  //   .text(d => d.duration)
-  //   .attr("style", "text-anchor: middle; dominant-baseline: central; user-select: none; fill: black;");
-
-  let linkLabels = svg.selectAll(".link-label")
-    .data(graphData.links)
-    .enter()
-    .append("text")
-    .attr("class", "link-label")
-    .attr("style", "text-anchor: middle; dominant-baseline: central; user-select: none; fill: black;")
-    .text(d => `${graphData.nodes.duration} dias`);
-
-
   // Crear los nodos
   let nodes = svg.selectAll("circle")
     .data(graphData.nodes)
@@ -81,10 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x)
       .attr("y2", d => d.target.y);
-
-    linkLabels
-      .attr("x", d => (d.source.x + d.target.x) / 2)
-      .attr("y", d => (d.source.y + d.target.y) / 2)
 
     nodes
       .attr("cx", d => d.x)
