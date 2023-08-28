@@ -50,13 +50,27 @@ document.addEventListener("DOMContentLoaded", function () {
     .attr("fill", "rgb(0, 100, 199)")
     .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")
 
-  // Agregar etiquetas a los nodos
-  var nodeLabels = svg.selectAll(".node-label")
+    // Agregar etiquetas a los nodos
+    var nodeLabels = svg.selectAll(".node-label")
     .data(graphData.nodes)
     .enter().append("text")
     .attr("class", "node-label")
     .text(d => d.id)
-    .attr("style", "text-anchor: middle; dominant-baseline: central; user-select: none; fill: white;");
+    .attr("style", "text-anchor: middle; dominant-baseline: central; user-select: none; fill: white;")
+    .on("mouseover", function(event, d) {
+      // Muestra la información del nodo cuando el mouse está sobre él
+      const tooltip = d3.select("#tooltip");
+      tooltip.transition().duration(200).style("opacity", .9);
+      tooltip.html("Información del nodo: " + d.id + " Prerequisito:"+ d.prerequisites +" Postrequisito:"+ 
+      d.postrequisites +" Costo:"+ d.cost)
+        .style("left", (event.pageX) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function(d) {
+      // Oculta la información cuando el mouse sale del nodo
+      const tooltip = d3.select("#tooltip");
+      tooltip.transition().duration(500).style("opacity", 0);
+    });
 
   // Actualizar la simulación en cada fotograma
   simulation.on("tick", () => {
@@ -72,7 +86,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     nodeLabels
       .attr("x", d => d.x)
-      .attr("y", d => d.y);
+      .attr("y", d => d.y)
+      .attr("class", "invisible");
 
   });
 
