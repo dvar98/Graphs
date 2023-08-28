@@ -130,6 +130,8 @@ function openNodePopup() {
   }
 
 function updateVisualization() {
+    console.log(graphData.nodes)
+
     // Actualizar enlaces existentes
     links = svg.selectAll("line")
       .data(graphData.links);
@@ -176,18 +178,18 @@ function updateVisualization() {
     simulation.force("link").links(graphData.links);
     simulation.alpha(1).restart();
   }
-    // Configurar el evento click para agregar aristas
+// Configurar el evento click para agregar aristas
 const addEdgeButton = document.getElementById("add-edge-button");
 if (addEdgeButton) {
   addEdgeButton.addEventListener("click", openEdgePopup);
 }
 
 function openEdgePopup() {
-  const sourceNodeId = prompt("Ingrese el ID del nodo de origen:");
-  const targetNodeId = prompt("Ingrese el ID del nodo de destino:");
+  let sourceNodeId = prompt("Ingrese el ID del nodo de origen:");
+  let targetNodeId = prompt("Ingrese el ID del nodo de destino:");
 
-  const sourceNode = graphData.nodes.find(node => node.id === parseInt(sourceNodeId));
-  const targetNode = graphData.nodes.find(node => node.id === parseInt(targetNodeId));
+  sourceNode = graphData.nodes.find(node => node.id === parseInt(sourceNodeId));
+  targetNode = graphData.nodes.find(node => node.id === parseInt(targetNodeId));
 
   if (sourceNode && targetNode) {
     addLink(sourceNode, targetNode);
