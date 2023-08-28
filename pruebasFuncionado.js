@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let nodes = svg.selectAll("circle")
     .data(graphData.nodes)
     .enter().append("circle")
-    .attr("r", 10)
+    .attr("r", 20)
     .attr("fill", "rgb(0, 100, 199)")
     .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")
 
@@ -141,8 +141,8 @@ document.addEventListener("DOMContentLoaded", function () {
     links.exit().remove(); // Eliminar enlaces no utilizados
 
     links = links.enter().append("line")
-      .attr("stroke", "#999")
-      .attr("stroke-width", 1)
+      .attr("stroke", "#666")
+      .attr("stroke-width", 3)
       .merge(links); // Combinar enlaces existentes y nuevos
 
     // Actualizar nodos existentes
@@ -152,9 +152,8 @@ document.addEventListener("DOMContentLoaded", function () {
     nodes.exit().remove(); // Eliminar nodos no utilizados
 
     nodes = nodes.enter().append("circle")
-      .attr("r", 10)
-      .attr("fill", "rgb(0, 100, 199)")
-      .call(d3.drag()
+      .attr("r", 20)
+      .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")      .call(d3.drag()
         .on("start", dragStarted)
         .on("drag", dragging)
         .on("end", dragEnded))
