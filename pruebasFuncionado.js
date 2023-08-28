@@ -57,7 +57,21 @@ document.addEventListener("DOMContentLoaded", function () {
     .enter().append("text")
     .attr("class", "node-label")
     .text(d => d.id)
-    .attr("style", "text-anchor: middle; dominant-baseline: central; cursor: pointer; user-select: none; fill: white;");
+    .attr("style", "text-anchor: middle; dominant-baseline: central; cursor: pointer; user-select: none; fill: white;")
+    .on("mouseover", function (event, d) {
+      // Muestra la información del nodo cuando el mouse está sobre él
+      const tooltip = d3.select("#tooltip");
+      tooltip.transition().duration(200).style("opacity", .9);
+      tooltip.html("Información del nodo: " + d.id + " Prerequisito:" + d.prerequisites + " Postrequisito:" +
+        d.postrequisites + " Costo:" + d.cost)
+        .style("left", (event.pageX) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function (d) {
+      // Oculta la información cuando el mouse sale del nodo
+      const tooltip = d3.select("#tooltip");
+      tooltip.transition().duration(500).style("opacity", 0);
+    });
 
   // Actualizar la simulación en cada fotograma
   simulation.on("tick", () => {
@@ -258,6 +272,22 @@ document.addEventListener("DOMContentLoaded", function () {
       alert("Nodo no encontrado. Asegúrese de ingresar un ID válido.");
     }
   }
+
+  // Mostar el tiempo total de la ruta de cada nodo enciam de los links
+  links.on("mouseover", function (event, d) {
+    // Muestra la información del nodo cuando el mouse está sobre él
+    const tooltip = d3.select("#tooltip");
+    tooltip.transition().duration(200).style("opacity", .9);
+    tooltip.html("Tiempo total de la ruta: " + d.target.duration + " días")
+      .style("left", (event.pageX) + "px")
+      .style("top", (event.pageY - 28) + "px");
+  })
+    .on("mouseout", function (d) {
+      // Oculta la información cuando el mouse sale del nodo
+      const tooltip = d3.select("#tooltip");
+      tooltip.transition().duration(500).style("opacity", 0);
+
+    });
 
 
 });
