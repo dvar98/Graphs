@@ -1,23 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Visualización de Grafo</title>
   <link rel="stylesheet" type="text/css" href="grafos21.css">
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/2103/2103658.png">
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 
 <body>
-  <div id="graph-container"></div>
-  <div id="tooltip" class="tooltip"></div>
-  <button id="add-node-button">Agregar Nodo</button>
-  <!-- <button id="remove-edge-button">Eliminar Nodo</button> -->
-  <button id="show-prerequisites-and-postrequisites-button" onclick="showPrerequisitesAndPostrequisites()">Mostrar Pre y Post Requisitos</button>
-  <button id="show-total-cost-button"  onclick="showTotalCost()">Mostrar Costo Total</button>
-  <button id="add-edge-button">Agregar Arista</button>
+  <header>
+    <h1>Grafos</h1>
+  </header>
+  <main>
+    <div id="graph-container"></div>
+    <div id="tooltip" class="tooltip"></div>
+    <!-- <button id="remove-edge-button">Eliminar Nodo</button> -->
+    <div class="botones">
+      <button class="boton" id="add-node-button">Agregar Nodo</button>
+      <button class="boton" id="show-prerequisites-and-postrequisites-button"
+        onclick="showPrerequisitesAndPostrequisites()">Mostrar Pre y Post Requisitos</button>
+      <button class="boton" id="show-total-cost-button" onclick="showTotalCost()">Mostrar Costo Total</button>
+      <button class="boton" id="add-edge-button">Agregar Arista</button>
+    </div>
+  </main>
+  <footer>
+    <h2>Trabajo hecho por : </h2>
+    <div class="integrantes">
+      <p>Harold Burbano</p>
+      <p>Andres Rey</p>
+      <p>Daniel Valera</p>
+      <p>Juan Silva</p>
+    </div>
+    <p><a href="https://github.com/dvar98/html.git" target="_blank">GitHub</a></p>
+  </footer>
   <script src="pruebas.js"></script>
-  
-  
 </body>
 
 </html>
