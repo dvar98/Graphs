@@ -50,23 +50,23 @@ document.addEventListener("DOMContentLoaded", function () {
     .attr("fill", "rgb(0, 100, 199)")
     .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")
 
-    // Agregar etiquetas a los nodos
-    var nodeLabels = svg.selectAll(".node-label")
+  // Agregar etiquetas a los nodos
+  var nodeLabels = svg.selectAll(".node-label")
     .data(graphData.nodes)
     .enter().append("text")
     .attr("class", "node-label")
     .text(d => d.id)
     .attr("style", "text-anchor: middle; dominant-baseline: central; user-select: none; fill: white;")
-    .on("mouseover", function(event, d) {
+    .on("mouseover", function (event, d) {
       // Muestra la información del nodo cuando el mouse está sobre él
       const tooltip = d3.select("#tooltip");
       tooltip.transition().duration(200).style("opacity", .9);
-      tooltip.html("Información del nodo: " + d.id + " Prerequisito:"+ d.prerequisites +" Postrequisito:"+ 
-      d.postrequisites +" Costo:"+ d.cost)
+      tooltip.html("Información del nodo: " + d.id + " Prerequisito:" + d.prerequisites + " Postrequisito:" +
+        d.postrequisites + " Costo:" + d.cost)
         .style("left", (event.pageX) + "px")
         .style("top", (event.pageY - 28) + "px");
     })
-    .on("mouseout", function(d) {
+    .on("mouseout", function (d) {
       // Oculta la información cuando el mouse sale del nodo
       const tooltip = d3.select("#tooltip");
       tooltip.transition().duration(500).style("opacity", 0);
@@ -184,9 +184,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     nodeLabels = nodeLabels.enter().append("text")
       .attr("class", "node-label")
-      .text(d => d.name)
-      .attr("dx", 12)
-      .attr("dy", 4)
+      .text(d => d.id)
+      .attr("style", "text-anchor: middle; dominant-baseline: central; cursor: pointer; user-select: none; fill: white;")
       .merge(nodeLabels); // Combinar etiquetas de nodos existentes y nuevas
 
     // Actualizar la simulación con los datos actualizados
@@ -240,119 +239,119 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Configurar el evento click para eliminar aristas
-const removeEdgeButton = document.getElementById("remove-edge-button");
-if (removeEdgeButton) {
-  removeEdgeButton.addEventListener("click", openRemoveEdgePopup);
-}
-
-function openRemoveEdgePopup() {
-  let sourceNodeId = prompt("Ingrese el ID del nodo de origen:");
-  let targetNodeId = prompt("Ingrese el ID del nodo de destino:");
-
-  console.log("sourceNodeId:", sourceNodeId);
-  console.log("targetNodeId:", targetNodeId);
-
-  sourceNode = graphData.nodes.find(node => node.id === parseInt(sourceNodeId));
-  targetNode = graphData.nodes.find(node => node.id === parseInt(targetNodeId));
-
-  console.log("sourceNode:", sourceNode);
-  console.log("targetNode:", targetNode);
-
-  if (sourceNode && targetNode) {
-    removeLink(sourceNode, targetNode);
-  } else {
-    alert("Nodos no encontrados. Asegúrese de ingresar IDs válidos.");
+  const removeEdgeButton = document.getElementById("remove-edge-button");
+  if (removeEdgeButton) {
+    removeEdgeButton.addEventListener("click", openRemoveEdgePopup);
   }
-}
 
-// Función para eliminar una arista entre dos nodos
-function removeLink(source, target) {
+  function openRemoveEdgePopup() {
+    let sourceNodeId = prompt("Ingrese el ID del nodo de origen:");
+    let targetNodeId = prompt("Ingrese el ID del nodo de destino:");
+
+    console.log("sourceNodeId:", sourceNodeId);
+    console.log("targetNodeId:", targetNodeId);
+
+    sourceNode = graphData.nodes.find(node => node.id === parseInt(sourceNodeId));
+    targetNode = graphData.nodes.find(node => node.id === parseInt(targetNodeId));
+
+    console.log("sourceNode:", sourceNode);
+    console.log("targetNode:", targetNode);
+
+    if (sourceNode && targetNode) {
+      removeLink(sourceNode, targetNode);
+    } else {
+      alert("Nodos no encontrados. Asegúrese de ingresar IDs válidos.");
+    }
+  }
+
+  // Función para eliminar una arista entre dos nodos
+  function removeLink(source, target) {
     // Verificar si el enlace existe
     const linkExists = graphData.links.some(link => {
       return (link.source === source.id && link.target === target.id);
-    } ); 
+    });
 
     // Si existe, eliminarlo
     if (linkExists) {
-        graphData.links = graphData.links.filter(link => {
-            return !(link.source === source.id && link.target === target.id);
-        } );
+      graphData.links = graphData.links.filter(link => {
+        return !(link.source === source.id && link.target === target.id);
+      });
 
-        console.log("Arista eliminada:", removedLink);
-        console.log("graphData.links después de eliminar:", graphData.links);
+      console.log("Arista eliminada:", removedLink);
+      console.log("graphData.links después de eliminar:", graphData.links);
 
-        updateVisualization();
-    }   
-}
+      updateVisualization();
+    }
+  }
 
 
-// Configurar el evento click para mostrar los prerequisitos de un nodo y los postrequisitos
-const showPrerequisitesAndPostrequisitesButton = document.getElementById("show-prerequisites-and-postrequisites-button");
-if (showPrerequisitesAndPostrequisitesButton) {
+  // Configurar el evento click para mostrar los prerequisitos de un nodo y los postrequisitos
+  const showPrerequisitesAndPostrequisitesButton = document.getElementById("show-prerequisites-and-postrequisites-button");
+  if (showPrerequisitesAndPostrequisitesButton) {
     showPrerequisitesAndPostrequisitesButton.addEventListener("click", showPrerequisitesAndPostrequisites);
-}
+  }
 
-//Funcion que muestre los prerequisitos de un nodo y los postrequisitos
-function showPrerequisitesAndPostrequisites() {
+  //Funcion que muestre los prerequisitos de un nodo y los postrequisitos
+  function showPrerequisitesAndPostrequisites() {
     let nodeId = prompt("Ingrese el ID del nodo:");
     let node = graphData.nodes.find(node => node.id === parseInt(nodeId));
 
     if (node) {
-        alert("Prerequisitos: " + node.prerequisites + "\nPostrequisitos: " + node.postrequisites);
+      alert("Prerequisitos: " + node.prerequisites + "\nPostrequisitos: " + node.postrequisites);
     } else {
-        alert("Nodo no encontrado. Asegúrese de ingresar un ID válido.");
+      alert("Nodo no encontrado. Asegúrese de ingresar un ID válido.");
     }
-}
+  }
 
-// Configurar el evento click para mostrar el costo total de un nodo
-const showTotalCostButton = document.getElementById("show-total-cost-button");
-if (showTotalCostButton) {
+  // Configurar el evento click para mostrar el costo total de un nodo
+  const showTotalCostButton = document.getElementById("show-total-cost-button");
+  if (showTotalCostButton) {
     showTotalCostButton.addEventListener("click", showTotalCost);
-}
+  }
 
-//Funcion que muestre el costo total de un nodo
-function showTotalCost() {
+  //Funcion que muestre el costo total de un nodo
+  function showTotalCost() {
     let nodeId = prompt("Ingrese el ID del nodo:");
     let node = graphData.nodes.find(node => node.id === parseInt(nodeId));
 
     if (node) {
-        alert("Costo total: " + node.cost);
+      alert("Costo total: " + node.cost);
     } else {
-        alert("Nodo no encontrado. Asegúrese de ingresar un ID válido.");
+      alert("Nodo no encontrado. Asegúrese de ingresar un ID válido.");
     }
-}
+  }
 
-// Asignar eventos de mouseover y mouseout a los nodos
-nodes.on("mouseover", function(event, d) {
+  // Asignar eventos de mouseover y mouseout a los nodos
+  nodes.on("mouseover", function (event, d) {
     // Muestra la información del nodo cuando el mouse está sobre él
     const tooltip = d3.select("#tooltip");
     tooltip.transition().duration(200).style("opacity", .9);
-    tooltip.html("Información del nodo: " + d.id + " Prerequisito:"+ d.prerequisites +" Postrequisito:"+ 
-    d.postrequisites +" Costo:"+ d.cost)
+    tooltip.html("Información del nodo: " + d.id + " Prerequisito:" + d.prerequisites + " Postrequisito:" +
+      d.postrequisites + " Costo:" + d.cost)
       .style("left", (event.pageX) + "px")
       .style("top", (event.pageY - 28) + "px");
   })
-  .on("mouseout", function(d) {
-    // Oculta la información cuando el mouse sale del nodo
-    const tooltip = d3.select("#tooltip");
-    tooltip.transition().duration(500).style("opacity", 0);
-  });
+    .on("mouseout", function (d) {
+      // Oculta la información cuando el mouse sale del nodo
+      const tooltip = d3.select("#tooltip");
+      tooltip.transition().duration(500).style("opacity", 0);
+    });
 
-    // Mostar el tiempo total de la ruta de cada nodo enciam de los links
-    links.on("mouseover", function(event, d) {
-        // Muestra la información del nodo cuando el mouse está sobre él
-        const tooltip = d3.select("#tooltip");
-        tooltip.transition().duration(200).style("opacity", .9);
-        tooltip.html("Tiempo total de la ruta: " + d.target.duration + " días")
-          .style("left", (event.pageX) + "px")
-          .style("top", (event.pageY - 28) + "px");
-      })
-        .on("mouseout", function(d) {
-        // Oculta la información cuando el mouse sale del nodo
-        const tooltip = d3.select("#tooltip");
-        tooltip.transition().duration(500).style("opacity", 0);
-  
-  });
+  // Mostar el tiempo total de la ruta de cada nodo enciam de los links
+  links.on("mouseover", function (event, d) {
+    // Muestra la información del nodo cuando el mouse está sobre él
+    const tooltip = d3.select("#tooltip");
+    tooltip.transition().duration(200).style("opacity", .9);
+    tooltip.html("Tiempo total de la ruta: " + d.target.duration + " días")
+      .style("left", (event.pageX) + "px")
+      .style("top", (event.pageY - 28) + "px");
+  })
+    .on("mouseout", function (d) {
+      // Oculta la información cuando el mouse sale del nodo
+      const tooltip = d3.select("#tooltip");
+      tooltip.transition().duration(500).style("opacity", 0);
+
+    });
 
 });
 
