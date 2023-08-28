@@ -29,6 +29,12 @@ document.addEventListener("DOMContentLoaded", function () {
     .attr("width", width)
     .attr("height", height);
 
+  // Crear un grupo para las líneas de los enlaces
+  const linkGroup = svg.append("g").attr("id", "linkGroup");
+
+  // Crear un grupo para los nodos y etiquetas
+  const nodeGroup = svg.append("g").attr("id", "nodeGroup");
+
   // Crear una simulación de fuerza para los nodos
   const simulation = d3.forceSimulation(graphData.nodes)
     .force("charge", d3.forceManyBody().strength(-100))
@@ -36,28 +42,34 @@ document.addEventListener("DOMContentLoaded", function () {
     .force("center", d3.forceCenter(width / 2, height / 2));
 
   // Crear los enlaces (conexiones)
-  let links = svg.selectAll("line")
+  let links = linkGroup.selectAll(".link")
     .data(graphData.links)
     .enter().append("line")
+    .attr("class", "link")
     .attr("stroke", "#666")
-    .attr("stroke-width", 3)
+    .attr("stroke-width", 3);
 
 
   // Crear los nodos
-  let nodes = svg.selectAll("circle")
+  let nodes = nodeGroup.selectAll(".node")
     .data(graphData.nodes)
     .enter().append("circle")
+    .attr("class", "node")
     .attr("r", 20)
     .attr("fill", "rgb(0, 100, 199)")
-    .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")
+    .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: move;")
+    .call(d3.drag()
+      .on("start", dragStarted)
+      .on("drag", dragging)
+      .on("end", dragEnded));
 
   // Agregar etiquetas a los nodos
-  var nodeLabels = svg.selectAll(".node-label")
+  let nodeLabels = nodeGroup.selectAll(".node-label")
     .data(graphData.nodes)
     .enter().append("text")
     .attr("class", "node-label")
     .text(d => d.id)
-    .attr("style", "text-anchor: middle; dominant-baseline: central; cursor: pointer; user-select: none; fill: white;")
+    .attr("style", "text-anchor: middle; dominant-baseline: central;cursor: pointer; fill: white;")
     .on("mouseover", function (event, d) {
       // Muestra la información del nodo cuando el mouse está sobre él
       const tooltip = d3.select("#tooltip");
@@ -146,8 +158,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function updateVisualization() {
-    console.log(graphData.nodes)
-
     // Actualizar enlaces existentes
     links = svg.selectAll("line")
       .data(graphData.links);
@@ -155,6 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
     links.exit().remove(); // Eliminar enlaces no utilizados
 
     links = links.enter().append("line")
+      .attr("class", "link")
       .attr("stroke", "#666")
       .attr("stroke-width", 3)
       .merge(links); // Combinar enlaces existentes y nuevos
@@ -167,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     nodes = nodes.enter().append("circle")
       .attr("r", 20)
-      .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")      
+      .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: move;")
       .call(d3.drag()
         .on("start", dragStarted)
         .on("drag", dragging)
@@ -185,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
     nodeLabels = nodeLabels.enter().append("text")
       .attr("class", "node-label")
       .text(d => d.id)
-      .attr("style", "text-anchor: middle; dominant-baseline: central; cursor: pointer; user-select: none; fill: white;")
+      .attr("style", "text-anchor: middle; dominant-baseline: central;cursor: pointer; fill: white;")
       .merge(nodeLabels); // Combinar etiquetas de nodos existentes y nuevas
 
     // Actualizar la simulación con los datos actualizados
