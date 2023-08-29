@@ -147,11 +147,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Configurar el evento click para agregar aristas
-  const addEdgeButton = document.getElementById("add-edge-button").addEventListener("click", openEdgePopup);
-
-  function openEdgePopup() {
+  const addEdgeButton = document.getElementById("add-edge-button").addEventListener("click", () => {
     let sourceNodeId = prompt("Ingrese el ID del nodo de origen:");
     let targetNodeId = prompt("Ingrese el ID del nodo de destino:");
+
+    openEdgePopup(sourceNodeId, targetNodeId)
+  });
+
+  function openEdgePopup(sourceNodeId, targetNodeId) {
 
     sourceNode = graphData.nodes.find(node => node.id === parseInt(sourceNodeId));
     targetNode = graphData.nodes.find(node => node.id === parseInt(targetNodeId));
@@ -210,12 +213,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   const deleteLinkButton = document.getElementById("delete-edge-button")
-  deleteLinkButton.addEventListener("click", deleteLink)
-
-  function deleteLink() {
+  deleteLinkButton.addEventListener("click", () => {
     let link1 = parseInt(prompt("Ingrese el ID del nodo inicio del arista"));
     let link2 = parseInt(prompt("Ingrese el ID del nodo fin del arista"));
 
+    deleteLink(link1, link2)
+  })
+
+  function deleteLink(link1, link2) {
     graphData.links = graphData.links.filter(link =>
       (link.source.id !== link1 && link.target.id !== link2)
     );
@@ -224,6 +229,25 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log(graphData.links);
     updateVisualization()
   }
+
+  const updateLinkButton = document.getElementById("modify-edge-button")
+  updateLinkButton.addEventListener("click", updateLink)
+
+  function updateLink() {
+    let link1 = parseInt(prompt("Ingrese el ID del nodo inicio del arista a actualizar"));
+    let link2 = parseInt(prompt("Ingrese el ID del nodo fin del arista a actualizar"));
+
+    const newLink1 = parseInt(prompt("Ingrese el nuevo ID del nodo inicio del arista"));
+    const newLink2 = parseInt(prompt("Ingrese el nuevo ID del nodo fin del arista"));
+
+    deleteLink(link1, link2)
+    openEdgePopup(newLink1, newLink2)
+
+    console.log(graphData.links)
+
+    updateVisualization(); // Asegúrate de actualizar la visualización después de modificar los datos
+  }
+
 
   function updateVisualization() {
     // Actualizar enlaces existentes
