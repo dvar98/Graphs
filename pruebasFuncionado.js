@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function updateVisualization() {
     // Actualizar enlaces existentes
-    links = svg.selectAll("line")
+    links = linkGroup.selectAll("line")
       .data(graphData.links);
 
     links.exit().remove(); // Eliminar enlaces no utilizados
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .merge(links); // Combinar enlaces existentes y nuevos
 
     // Actualizar nodos existentes
-    nodes = svg.selectAll("circle")
+    nodes = nodeGroup.selectAll("circle")
       .data(graphData.nodes);
 
     nodes.exit().remove(); // Eliminar nodos no utilizados
