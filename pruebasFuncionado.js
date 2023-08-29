@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Actualizar etiquetas de nodos existentes
     nodeLabels = svg.selectAll(".node-label")
-      .data(graphData.nodes);
+      .data(graphData.nodes, d => d.id);
 
     nodeLabels.exit().remove(); // Eliminar etiquetas no utilizadas
 
