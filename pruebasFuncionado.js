@@ -182,8 +182,6 @@ document.addEventListener("DOMContentLoaded", function () {
       graphData.nodes.splice(nodeIndex, 1);
       graphData.links = graphData.links.filter(link => link.source.id !== deleteNodeId && link.target.id !== deleteNodeId);
 
-      console.log(graphData.links);
-
       updateVisualization();
     }
   }
@@ -209,6 +207,22 @@ document.addEventListener("DOMContentLoaded", function () {
       graphData.links.push({ source: source.id, target: target.id });
       updateVisualization();
     }
+  }
+
+  const deleteLinkButton = document.getElementById("delete-edge-button")
+  deleteLinkButton.addEventListener("click", deleteLink)
+
+  function deleteLink() {
+    let link1 = parseInt(prompt("Ingrese el ID del nodo inicio del arista"));
+    let link2 = parseInt(prompt("Ingrese el ID del nodo fin del arista"));
+
+    graphData.links = graphData.links.filter(link =>
+      (link.source.id !== link1 && link.target.id !== link2)
+    );
+
+    // graphData.links = graphData.links.filter(link => link.source.id !== 1)
+    console.log(graphData.links);
+    updateVisualization()
   }
 
   function updateVisualization() {
