@@ -146,6 +146,59 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
+  // Configurar el evento click para agregar aristas
+  const addEdgeButton = document.getElementById("add-edge-button").addEventListener("click", openEdgePopup);
+
+  function openEdgePopup() {
+    let sourceNodeId = prompt("Ingrese el ID del nodo de origen:");
+    let targetNodeId = prompt("Ingrese el ID del nodo de destino:");
+
+    sourceNode = graphData.nodes.find(node => node.id === parseInt(sourceNodeId));
+    targetNode = graphData.nodes.find(node => node.id === parseInt(targetNodeId));
+
+    if (sourceNode && targetNode) {
+      addLink(sourceNode, targetNode);
+    } else {
+      alert("Nodos no encontrados. Asegúrese de ingresar IDs válidos.");
+    }
+  }
+
+  const deleteNodeButton = document.getElementById("delete-node-button").addEventListener("click", deleteNodePopup);
+
+  function deleteNodePopup() {
+    let deleteNodeId = prompt("Ingrese el ID del nodo a eliminar:");
+
+    if (!graphData.nodes.splice(deleteNodeId, 1)) {
+      alert('Nodo no encontrado')
+    } else {
+      console.log(graphData.nodes);
+      updateVisualization();
+    }
+  }
+
+
+  // Función para agregar un enlace entre dos nodos
+  function addLink(source, target) {
+    // Verificar si el enlace ya existe
+    const linkExists = graphData.links.some(link => {
+      return (link.source === source.id && link.target === target.id);
+    });
+
+    // Si no existe, agregarlo
+    if (!linkExists) {
+      if (source.id < target.id) {
+        graphData.nodes[source.id].postrequisites.push(target.id)
+        graphData.nodes[target.id].prerequisites.push(source.id)
+      } else if (source.id > target.id) {
+        graphData.nodes[target.id].postrequisites.push(source.id)
+        graphData.nodes[source.id].prerequisites.push(target.id)
+      }
+
+      graphData.links.push({ source: source.id, target: target.id });
+      updateVisualization();
+    }
+  }
+
   function updateVisualization() {
     // Actualizar enlaces existentes
     links = linkGroup.selectAll("line")
@@ -195,48 +248,6 @@ document.addEventListener("DOMContentLoaded", function () {
     simulation.nodes(graphData.nodes);
     simulation.force("link").links(graphData.links);
     simulation.alpha(1).restart();
-  }
-
-  // Configurar el evento click para agregar aristas
-  const addEdgeButton = document.getElementById("add-edge-button");
-  if (addEdgeButton) {
-    addEdgeButton.addEventListener("click", openEdgePopup);
-  }
-
-  function openEdgePopup() {
-    let sourceNodeId = prompt("Ingrese el ID del nodo de origen:");
-    let targetNodeId = prompt("Ingrese el ID del nodo de destino:");
-
-    sourceNode = graphData.nodes.find(node => node.id === parseInt(sourceNodeId));
-    targetNode = graphData.nodes.find(node => node.id === parseInt(targetNodeId));
-
-    if (sourceNode && targetNode) {
-      addLink(sourceNode, targetNode);
-    } else {
-      alert("Nodos no encontrados. Asegúrese de ingresar IDs válidos.");
-    }
-  }
-
-  // Función para agregar un enlace entre dos nodos
-  function addLink(source, target) {
-    // Verificar si el enlace ya existe
-    const linkExists = graphData.links.some(link => {
-      return (link.source === source.id && link.target === target.id);
-    });
-
-    // Si no existe, agregarlo
-    if (!linkExists) {
-      if (source.id < target.id) {
-        graphData.nodes[source.id].postrequisites.push(target.id)
-        graphData.nodes[target.id].prerequisites.push(source.id)
-      } else if (source.id > target.id) {
-        graphData.nodes[target.id].postrequisites.push(source.id)
-        graphData.nodes[source.id].prerequisites.push(target.id)
-      }
-
-      graphData.links.push({ source: source.id, target: target.id });
-      updateVisualization();
-    }
   }
 
   function infoNode() {
