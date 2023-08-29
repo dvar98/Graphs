@@ -49,11 +49,19 @@ main {
   font-size: 15px;
   border: none;
   border-radius: 10px;
-  background-color: #2c1412;
   color: white;
   font-weight: bold;
   cursor: pointer;
   box-shadow: inset 1px 1px 0 #ccc, 0 2px 3px rgba(0, 0, 0, .4);
+}
+
+.nodo{
+  background-color: #478f90;
+}
+
+.arista{
+  background-color: #9c544c;
+
 }
 
 .tooltip {
