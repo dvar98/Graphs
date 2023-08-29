@@ -163,15 +163,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  const deleteNodeButton = document.getElementById("delete-node-button").addEventListener("click", deleteNodePopup);
+  const deleteNodeButton = document.getElementById("delete-node-button")
+  deleteNodeButton.addEventListener("click", deleteNodePopup);
 
   function deleteNodePopup() {
-    let deleteNodeId = prompt("Ingrese el ID del nodo a eliminar:");
+    let deleteNodeId = parseInt(prompt("Ingrese el ID del nodo a eliminar:"));
 
-    if (!graphData.nodes.splice(deleteNodeId, 1)) {
-      alert('Nodo no encontrado')
+    if (isNaN(deleteNodeId)) {
+      alert('ID de nodo no válido');
+      return;
+    }
+
+    const nodeIndex = graphData.nodes.findIndex(node => node.id === deleteNodeId);
+
+    if (nodeIndex === -1) {
+      alert('Nodo no encontrado');
     } else {
-      console.log(graphData.nodes);
+      graphData.nodes.splice(nodeIndex, 1);
+      graphData.links = graphData.links.filter(link => link.source.id !== deleteNodeId && link.target.id !== deleteNodeId);
+
+      console.log(graphData.links);
+
       updateVisualization();
     }
   }
