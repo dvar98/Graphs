@@ -70,20 +70,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .attr("class", "node-label")
     .text(d => d.id)
     .attr("style", "text-anchor: middle; dominant-baseline: central;cursor: pointer; fill: white;")
-    .on("mouseover", function (event, d) {
-      // Muestra la información del nodo cuando el mouse está sobre él
-      const tooltip = d3.select("#tooltip");
-      tooltip.transition().duration(200).style("opacity", .9);
-      tooltip.html("Información del nodo: " + d.id + " Prerequisito:" + d.prerequisites + " Postrequisito:" +
-        d.postrequisites + " Costo:" + d.cost)
-        .style("left", (event.pageX) + "px")
-        .style("top", (event.pageY - 28) + "px");
-    })
-    .on("mouseout", function (d) {
-      // Oculta la información cuando el mouse sale del nodo
-      const tooltip = d3.select("#tooltip");
-      tooltip.transition().duration(500).style("opacity", 0);
-    });
 
   // Actualizar la simulación en cada fotograma
   simulation.on("tick", () => {
@@ -129,6 +115,9 @@ document.addEventListener("DOMContentLoaded", function () {
     d.fx = null;
     d.fy = null;
   }
+
+  infoTiempoLink()
+  infoNode()
 
   const addNodeButton = document.getElementById("add-node-button");
   if (addNodeButton) {
@@ -200,6 +189,9 @@ document.addEventListener("DOMContentLoaded", function () {
       .merge(nodeLabels); // Combinar etiquetas de nodos existentes y nuevas
 
     // Actualizar la simulación con los datos actualizados
+    infoNode()
+    infoTiempoLink()
+
     simulation.nodes(graphData.nodes);
     simulation.force("link").links(graphData.links);
     simulation.alpha(1).restart();
@@ -285,19 +277,40 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Mostar el tiempo total de la ruta de cada nodo enciam de los links
-  links.on("mouseover", function (event, d) {
-    // Muestra la información del nodo cuando el mouse está sobre él
-    const tooltip = d3.select("#tooltip");
-    tooltip.transition().duration(200).style("opacity", .9);
-    tooltip.html("Tiempo total de la ruta: " + d.target.duration + " días")
-      .style("left", (event.pageX) + "px")
-      .style("top", (event.pageY - 28) + "px");
-  })
-    .on("mouseout", function (d) {
-      // Oculta la información cuando el mouse sale del nodo
-      const tooltip = d3.select("#tooltip");
-      tooltip.transition().duration(500).style("opacity", 0);
+  function infoNode() {
+    nodeLabels
+      .on("mouseover", function (event, d) {
+        // Muestra la información del nodo cuando el mouse está sobre él
+        const tooltip = d3.select("#tooltip");
+        tooltip.transition().duration(200).style("opacity", .9);
+        tooltip.html("Información del nodo: " + d.id + " Prerequisito:" + d.prerequisites + " Postrequisito:" +
+          d.postrequisites + " Costo:" + d.cost)
+          .style("left", (event.pageX) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function (d) {
+        // Oculta la información cuando el mouse sale del nodo
+        const tooltip = d3.select("#tooltip");
+        tooltip.transition().duration(500).style("opacity", 0);
+      })
+  }
 
-    });
+  // Mostar el tiempo total de la ruta de cada nodo enciam de los links
+  function infoTiempoLink() {
+    links
+      .on("mouseover", function (event, d) {
+        // Muestra la información del nodo cuando el mouse está sobre él
+        const tooltip = d3.select("#tooltip");
+        tooltip.transition().duration(200).style("opacity", .9);
+        tooltip.html("Tiempo total de la ruta: " + d.target.duration + " días")
+          .style("left", (event.pageX) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function (d) {
+        // Oculta la información cuando el mouse sale del nodo
+        const tooltip = d3.select("#tooltip");
+        tooltip.transition().duration(500).style("opacity", 0);
+
+      });
+  }
 });
