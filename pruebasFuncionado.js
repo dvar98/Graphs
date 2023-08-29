@@ -128,12 +128,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function openNodePopup() {
     const nodeName = prompt("Ingrese el nombre del nuevo nodo:");
+    const duration = prompt("Ingresa la duracion : ")
+    const cost = prompt("Ingresa costo : ")
     if (nodeName) {
       const newNode = {
         id: graphData.nodes.length,
         name: nodeName,
-        duration: 0,
-        cost: 0,
+        duration: duration,
+        cost: cost,
         prerequisites: [],
         postrequisites: []
       };
