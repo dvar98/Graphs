@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
   };
   // Configuración de la visualización
-  const width = 800;
+  const width = window.visualViewport.width*0.5;
   const height = 600;
 
   // Crear el lienzo SVG para la visualización
