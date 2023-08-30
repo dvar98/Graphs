@@ -1,4 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const all_inputs = document.querySelector("info-box-content input")
+  const nombre_input = document.getElementById("nombre_input")
+  const duracion_input = document.getElementById("duracion_input")
+  const costo_input = document.getElementById("costo_input")
+  const prerequisito_input = document.getElementById("prerequisito_input")
+  const postrequisito_input = document.getElementById("postrequisito_input")
+
   const graphData = {
     // Estructura de datos de los nodos y relaciones
     // Ejemplo:
@@ -327,30 +334,14 @@ document.addEventListener("DOMContentLoaded", function () {
     nodes
       .on("mouseover", (event, d) => {
         // Muestra la información del nodo cuando el mouse está sobre él
-        const infoNode = d3.select("#info-node");
-        infoNode.transition().duration(200).style("opacity", .9);
-        infoNode.html(
-          `Nombre: ${d.name}
-              Duración: ${d.duration}
-              Costo: ${d.cost}
-              Prerequisito: ${d.prerequisites}
-              ${d.postrequisites.length > 0 ? "Postrequisito: " + d.postrequisites : ""}`)
+        all_inputs.addEventListener("ch")
+        nombre_input.setAttribute("value", d.name)
+        duracion_input.setAttribute("value", d.duration)
+        costo_input.setAttribute("value", d.cost)
+        prerequisito_input.setAttribute("value", d.prerequisites)
+        postrequisito_input.setAttribute("value", d.postrequisites)
       })
   }
-
-
-  const nodeCircle = document.querySelector("#graph-container")
-  nodeCircle.addEventListener("click", (event, d) => {
-    console.log(event)
-    const infoNode = d3.select("#info-node");
-    infoNode.append("p")
-      .html(
-        `Nombre: ${d.name}
-          Duración: ${d.duration}
-          Costo: ${d.cost}
-          Prerequisito: ${d.prerequisites}
-          ${d.postrequisites.length > 0 ? "Postrequisito: " + d.postrequisites : ""}`)
-  })
 
   // Mostar el tiempo total de la ruta de cada nodo enciam de los links
   function infoTiempoLink() {
