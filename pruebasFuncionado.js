@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .attr("class", "node")
     .attr("r", 20)
     .attr("fill", "rgb(0, 100, 199)")
-    .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: move;")
+    .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")
     .call(d3.drag()
       .on("start", dragStarted)
       .on("drag", dragging)
@@ -304,12 +304,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function infoNode() {
     nodeLabels
-      .on("mouseover", function (event, d) {
+      .on("mouseover", (event, d) => {
         // Muestra la información del nodo cuando el mouse está sobre él
         const tooltip = d3.select("#tooltip");
         tooltip.transition().duration(200).style("opacity", .9);
-        tooltip.html("Información del nodo: " + d.id + " Prerequisito:" + d.prerequisites + " Postrequisito:" +
-          d.postrequisites + " Costo:" + d.cost)
+        tooltip.html(
+          `Nombre: ${d.name}
+          Duración: ${d.duration}
+          Costo: ${d.cost}
+          Prerequisito: ${d.prerequisites}
+          ${d.postrequisites.length > 0 ? "Postrequisito: " + d.postrequisites : ""}`)
+
           .style("left", (event.pageX) + "px")
           .style("top", (event.pageY - 28) + "px");
       })
@@ -318,7 +323,34 @@ document.addEventListener("DOMContentLoaded", function () {
         const tooltip = d3.select("#tooltip");
         tooltip.transition().duration(500).style("opacity", 0);
       })
+
+    nodes
+      .on("mouseover", (event, d) => {
+        // Muestra la información del nodo cuando el mouse está sobre él
+        const infoNode = d3.select("#info-node");
+        infoNode.transition().duration(200).style("opacity", .9);
+        infoNode.html(
+          `Nombre: ${d.name}
+              Duración: ${d.duration}
+              Costo: ${d.cost}
+              Prerequisito: ${d.prerequisites}
+              ${d.postrequisites.length > 0 ? "Postrequisito: " + d.postrequisites : ""}`)
+      })
   }
+
+
+  const nodeCircle = document.querySelector("#graph-container")
+  nodeCircle.addEventListener("click", (event, d) => {
+    console.log(event)
+    const infoNode = d3.select("#info-node");
+    infoNode.append("p")
+      .html(
+        `Nombre: ${d.name}
+          Duración: ${d.duration}
+          Costo: ${d.cost}
+          Prerequisito: ${d.prerequisites}
+          ${d.postrequisites.length > 0 ? "Postrequisito: " + d.postrequisites : ""}`)
+  })
 
   // Mostar el tiempo total de la ruta de cada nodo enciam de los links
   function infoTiempoLink() {

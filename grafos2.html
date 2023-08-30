@@ -16,16 +16,47 @@
     <h1>Gráfos</h1>
   </header>
   <main>
-    <div id="graph-container"></div>
+    <section id="graph-container"></section>
     <div id="tooltip" class="tooltip"></div>
-    <!-- <button id="remove-edge-button">Eliminar Nodo</button> -->
-    <div class="botones">
-      <button class="boton nodo" id="add-node-button">Agregar Nodo</button>
-      <button class="boton nodo" id="delete-node-button">Eliminar Nodo</button>
-      <button class="boton arista" id="add-edge-button">Agregar Arista</button>
-      <button class="boton arista" id="delete-edge-button">Eliminar Arista</button>
-      <button class="boton arista" id="modify-edge-button">Modificar Arista</button>
-    </div>
+    <section id="tools-graphic">
+      <section class="info">
+        <div class="info-node">
+          <h1>Información Nodo</h1>
+          <div class="info-box" id="info-node-content">
+            <p>Nombre:</p>
+            <p>Duración:</p>
+            <p>Costo:</p>
+            <p>Prerequisito:</p>
+            <p>Postrequisito:</p>
+            <input type="text" name="" id="">
+            <input type="text" name="" id="">
+            <input type="text" name="" id="">
+            <input type="text" name="" id="">
+            <input type="text" name="" id="">
+          </div>
+        </div>
+        <div class="info-link">
+          <h1>Información Link</h1>
+          <div class="info-box" id="info-link-content">
+            <p>Tiempo Total:</p>
+            <p>Nodo Inicio:</p>
+            <p>Nodo fin:</p>
+            <input type="text" name="" id="">
+            <input type="text" name="" id="">
+            <input type="text" name="" id="">
+          </div>
+        </div>
+      </section>
+      <div class="botones">
+        <div class="tools-nodo">
+          <button class="boton nodo" id="add-node-button">Agregar Nodo</button>
+          <button class="boton nodo" id="delete-node-button">Eliminar Nodo</button>
+        </div>
+        <button class="boton arista" id="add-edge-button">Agregar Arista</button>
+        <button class="boton arista" id="delete-edge-button">Eliminar Arista</button>
+        <button class="boton arista" id="modify-edge-button">Modificar Arista</button>
+      </div>
+    </section>
   </main>
   <footer>
     <h2>Trabajo hecho por : </h2>
