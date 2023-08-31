@@ -1,10 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const all_inputs = document.querySelector("info-box-content input")
-  const nombre_input = document.getElementById("nombre_input")
-  const duracion_input = document.getElementById("duracion_input")
-  const costo_input = document.getElementById("costo_input")
-  const prerequisito_input = document.getElementById("prerequisito_input")
-  const postrequisito_input = document.getElementById("postrequisito_input")
+  const all_inputs = document.querySelector("info-box-content input");
+  const nombre_input = document.getElementById("nombre_input");
+  const duracion_input = document.getElementById("duracion_input");
+  const costo_input = document.getElementById("costo_input");
+  const prerequisito_input = document.getElementById("prerequisito_input");
+  const postrequisito_input = document.getElementById("postrequisito_input");
+
+  const tiempoLink_input = document.getElementById("tiempo_input");
+  const nodoInicio_input = document.getElementById("inicio_input");
+  const nodoFin_input = document.getElementById("fin_input");
+
+  const node_attr = "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: move;";
+  const nodeLabel_attr = "text-anchor: middle; dominant-baseline: central; fill: white;";
+  const link_attr = "cursor: pointer;"
 
   const graphData = {
     // Estructura de datos de los nodos y relaciones
@@ -27,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
   };
   // Configuración de la visualización
-  const width = window.visualViewport.width*0.5;
+  const width = window.visualViewport.width * 0.5;
   const height = 600;
 
   // Crear el lienzo SVG para la visualización
@@ -53,18 +61,19 @@ document.addEventListener("DOMContentLoaded", function () {
     .data(graphData.links)
     .enter().append("line")
     .attr("class", "link")
-    .attr("stroke", "#666")
-    .attr("stroke-width", 3);
+    .attr("style", link_attr)
+    .attr("stroke", "#444")
+    .attr("stroke-width", 8);
 
 
   // Crear los nodos
   let nodes = nodeGroup.selectAll(".node")
     .data(graphData.nodes)
     .enter().append("circle")
-    .attr("class", "node")
+    .attr("class", "graph-node")
     .attr("r", 20)
     .attr("fill", "rgb(0, 100, 199)")
-    .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: pointer;")
+    .attr("style", node_attr)
     .call(d3.drag()
       .on("start", dragStarted)
       .on("drag", dragging)
@@ -74,9 +83,9 @@ document.addEventListener("DOMContentLoaded", function () {
   let nodeLabels = nodeGroup.selectAll(".node-label")
     .data(graphData.nodes)
     .enter().append("text")
-    .attr("class", "node-label")
+    .attr("class", "node-label invisible")
     .text(d => d.id)
-    .attr("style", "text-anchor: middle; dominant-baseline: central;cursor: pointer; fill: white;")
+    .attr("style", nodeLabel_attr)
 
   // Actualizar la simulación en cada fotograma
   simulation.on("tick", () => {
@@ -123,8 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
     d.fy = null;
   }
 
-  infoTiempoLink()
-  infoNode()
+  info();
 
   const addNodeButton = document.getElementById("add-node-button");
   if (addNodeButton) {
@@ -267,8 +275,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     links = links.enter().append("line")
       .attr("class", "link")
-      .attr("stroke", "#666")
-      .attr("stroke-width", 3)
+      .attr("style", link_attr)
+      .attr("stroke", "#444")
+      .attr("stroke-width", 8)
       .merge(links); // Combinar enlaces existentes y nuevos
 
     // Actualizar nodos existentes
@@ -279,7 +288,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     nodes = nodes.enter().append("circle")
       .attr("r", 20)
-      .attr("style", "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: move;")
+      .attr("class", "graph-node")
+      .attr("style", node_attr)
+      .attr("r", 20)
+      .attr("fill", "rgb(0, 100, 199)")
       .call(d3.drag()
         .on("start", dragStarted)
         .on("drag", dragging)
@@ -295,70 +307,72 @@ document.addEventListener("DOMContentLoaded", function () {
     nodeLabels.exit().remove(); // Eliminar etiquetas no utilizadas
 
     nodeLabels = nodeLabels.enter().append("text")
-      .attr("class", "node-label")
+      .attr("class", "node-label invisible")
       .text(d => d.id)
-      .attr("style", "text-anchor: middle; dominant-baseline: central;cursor: pointer; fill: white;")
+      .attr("style", nodeLabel_attr)
       .merge(nodeLabels); // Combinar etiquetas de nodos existentes y nuevas
 
     // Actualizar la simulación con los datos actualizados
-    infoNode()
-    infoTiempoLink()
+    info();
 
     simulation.nodes(graphData.nodes);
     simulation.force("link").links(graphData.links);
     simulation.alpha(1).restart();
   }
 
-  function infoNode() {
-    nodeLabels
-      .on("mouseover", (event, d) => {
-        // Muestra la información del nodo cuando el mouse está sobre él
-        const tooltip = d3.select("#tooltip");
-        tooltip.transition().duration(200).style("opacity", .9);
-        tooltip.html(
-          `Nombre: ${d.name}
-          Duración: ${d.duration}
-          Costo: ${d.cost}
-          Prerequisito: ${d.prerequisites}
-          ${d.postrequisites.length > 0 ? "Postrequisito: " + d.postrequisites : ""}`)
+  function info() {
+    // nodeLabels
+    //   .on("mouseover", (event, d) => {
+    //     // Muestra la información del nodo cuando el mouse está sobre él
+    //     const tooltip = d3.select("#tooltip");
+    //     tooltip.transition().duration(200).style("opacity", .9);
+    //     tooltip.html(
+    //       `Nombre: ${d.name}
+    //       Duración: ${d.duration}
+    //       Costo: ${d.cost}
+    //       Prerequisito: ${d.prerequisites}
+    //       ${d.postrequisites.length > 0 ? "Postrequisito: " + d.postrequisites : ""}`)
 
-          .style("left", (event.pageX) + "px")
-          .style("top", (event.pageY - 28) + "px");
-      })
-      .on("mouseout", function (d) {
-        // Oculta la información cuando el mouse sale del nodo
-        const tooltip = d3.select("#tooltip");
-        tooltip.transition().duration(500).style("opacity", 0);
-      })
+    //       .style("left", (event.pageX) + "px")
+    //       .style("top", (event.pageY - 28) + "px");
+    //   })
+    //   .on("mouseout", function (d) {
+    //     // Oculta la información cuando el mouse sale del nodo
+    //     const tooltip = d3.select("#tooltip");
+    //     tooltip.transition().duration(500).style("opacity", 0);
+    //   })
 
+    // Muestra la información del nodo cuando el mouse está sobre él
     nodes
       .on("mouseover", (event, d) => {
         // Muestra la información del nodo cuando el mouse está sobre él
-        all_inputs.addEventListener("ch")
-        nombre_input.setAttribute("value", d.name)
-        duracion_input.setAttribute("value", d.duration)
-        costo_input.setAttribute("value", d.cost)
-        prerequisito_input.setAttribute("value", d.prerequisites)
-        postrequisito_input.setAttribute("value", d.postrequisites)
+        nombre_input.setAttribute("value", d.name);
+        duracion_input.setAttribute("value", d.duration);
+        costo_input.setAttribute("value", d.cost);
+        prerequisito_input.setAttribute("value", d.prerequisites);
+        postrequisito_input.setAttribute("value", d.postrequisites);
       })
-  }
-
-  // Mostar el tiempo total de la ruta de cada nodo enciam de los links
-  function infoTiempoLink() {
-    links
-      .on("mouseover", function (event, d) {
-        // Muestra la información del nodo cuando el mouse está sobre él
-        const tooltip = d3.select("#tooltip");
-        tooltip.transition().duration(200).style("opacity", .9);
-        tooltip.html("Tiempo total de la ruta: " + d.target.duration + " días")
-          .style("left", (event.pageX) + "px")
-          .style("top", (event.pageY - 28) + "px");
-      })
-      .on("mouseout", function (d) {
+      .on("mouseout", (d) => {
         // Oculta la información cuando el mouse sale del nodo
-        const tooltip = d3.select("#tooltip");
-        tooltip.transition().duration(500).style("opacity", 0);
+        nombre_input.setAttribute("value", "");
+        duracion_input.setAttribute("value", "");
+        costo_input.setAttribute("value", "");
+        prerequisito_input.setAttribute("value", "");
+        postrequisito_input.setAttribute("value", "");
+      })
 
-      });
+    // Muestra la información del link cuando el mouse está sobre él
+    links
+      .on("mouseover", (event, d) => {
+        console.log(event)
+        tiempoLink_input.setAttribute("value", d.source.duration);
+        nodoInicio_input.setAttribute("value", d.source.id);
+        nodoFin_input.setAttribute("value", d.target.id);
+      })
+      .on("mouseout", (d) => {
+        tiempoLink_input.setAttribute("value", "");
+        nodoInicio_input.setAttribute("value", "");
+        nodoFin_input.setAttribute("value", "");
+      })
   }
 });
