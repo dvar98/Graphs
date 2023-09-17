@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const graph_container = document.getElementById("graph-container");
+
   const all_inputs = document.querySelector("info-box-content input");
   const nombre_input = document.getElementById("nombre_input");
   const duracion_input = document.getElementById("duracion_input");
@@ -35,14 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
   };
   // Configuración de la visualización
-  const width = window.visualViewport.width * 0.5;
-  const height = 600;
+  const width = graph_container.offsetWidth
+  const height = graph_container.offsetHeight
 
   // Crear el lienzo SVG para la visualización
   const svg = d3.select("#graph-container")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("style", `width: ${width}; height: ${height}`)
 
   // Crear un grupo para las líneas de los enlaces
   const linkGroup = svg.append("g").attr("id", "linkGroup");
