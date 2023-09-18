@@ -16,29 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const nodeLabel_attr = "text-anchor: middle; dominant-baseline: central; fill: white;";
   const link_attr = "cursor: pointer;"
 
-  const graphData = {
-    // Estructura de datos de los nodos y relaciones
-    // Ejemplo:
-    nodes: [
-      { id: 0, name: "0", duration: 5, cost: 100, prerequisites: [], postrequisites: [1] },
-      { id: 1, name: "1", duration: 3, cost: 50, prerequisites: [0], postrequisites: [2] },
-      { id: 2, name: "2", duration: 2, cost: 20, prerequisites: [1], postrequisites: [3] },
-      { id: 3, name: "3", duration: 4, cost: 80, prerequisites: [2], postrequisites: [4] },
-      { id: 4, name: "4", duration: 3, cost: 60, prerequisites: [3], postrequisites: [6] },
-      { id: 5, name: "5", duration: 2, cost: 40, prerequisites: [4], postrequisites: [] },
-    ],
-    links: [
-      { source: 0, target: 1 },
-      { source: 1, target: 2 },
-      { source: 2, target: 3 },
-      { source: 3, target: 4 },
-      { source: 4, target: 5 },
-
-    ],
-  };
   // Configuración de la visualización
   const width = graph_container.offsetWidth
   const height = graph_container.offsetHeight
+
+  console.log(graphData);
 
   // Crear el lienzo SVG para la visualización
   const svg = d3.select("#graph-container")

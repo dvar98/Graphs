@@ -16,49 +16,55 @@
     <h1>Gráfos</h1>
   </header>
   <main>
-    <section id="graph-container"></section>
-    <section id="tools-graphic">
-      <section class="info">
-        <div class="info-box" id="info-node">
-          <h2>Información Nodo</h2>
-          <div class="info-box-content" id="info-node-content">
-            <p>Nombre:</p>
-            <p>Duración:</p>
-            <p>Costo:</p>
-            <p>Prerequisito:</p>
-            <p>Postrequisito:</p>
-            <input type="text" name="" id="nombre_input">
-            <input type="text" name="" id="duracion_input">
-            <input type="text" name="" id="costo_input">
-            <input type="text" name="" id="prerequisito_input">
-            <input type="text" name="" id="postrequisito_input">
+    <div class="static-archives">
+      <button id="archiveBtn">Descargar</button>
+      <button id="archiveBtn">Cargar</button>
+    </div>
+    <div class="all-container">
+      <section id="graph-container"></section>
+      <section id="tools-graphic">
+        <section class="info">
+          <div class="info-box" id="info-node">
+            <h2>Información Nodo</h2>
+            <div class="info-box-content" id="info-node-content">
+              <p>Nombre:</p>
+              <p>Duración:</p>
+              <p>Costo:</p>
+              <p>Prerequisito:</p>
+              <p>Postrequisito:</p>
+              <input type="text" name="" id="nombre_input">
+              <input type="text" name="" id="duracion_input">
+              <input type="text" name="" id="costo_input">
+              <input type="text" name="" id="prerequisito_input">
+              <input type="text" name="" id="postrequisito_input">
+            </div>
           </div>
-        </div>
-        <div class="info-box" id="info-link">
-          <h2>Información Link</h2>
-          <div class="info-box-content" id="info-link-content">
-            <p>Tiempo:</p>
-            <p>Nodo Inicio:</p>
-            <p>Nodo fin:</p>
-            <input type="text" name="" id="tiempo_input">
-            <input type="text" name="" id="inicio_input">
-            <input type="text" name="" id="fin_input">
+          <div class="info-box" id="info-link">
+            <h2>Información Link</h2>
+            <div class="info-box-content" id="info-link-content">
+              <p>Tiempo:</p>
+              <p>Nodo Inicio:</p>
+              <p>Nodo fin:</p>
+              <input type="text" name="" id="tiempo_input">
+              <input type="text" name="" id="inicio_input">
+              <input type="text" name="" id="fin_input">
+            </div>
+          </div>
+        </section>
+        <div class="botones">
+          <div class="tools-nodo">
+            <button class="boton nodo" id="add-node-button">Agregar Nodo</button>
+            <button class="boton nodo" id="delete-node-button">Eliminar Nodo</button>
+            <button class="boton nodo" id="modify-node-button">Modificar Nodo</button>
+          </div>
+          <div class="tools-arista">
+            <button class="boton arista" id="add-edge-button">Agregar Arista</button>
+            <button class="boton arista" id="delete-edge-button">Eliminar Arista</button>
+            <button class="boton arista" id="modify-edge-button">Modificar Arista</button>
           </div>
         </div>
       </section>
-      <div class="botones">
-        <div class="tools-nodo">
-          <button class="boton nodo" id="add-node-button">Agregar Nodo</button>
-          <button class="boton nodo" id="delete-node-button">Eliminar Nodo</button>
-          <button class="boton nodo" id="modify-node-button">Modificar Nodo</button>
-        </div>
-        <div class="tools-arista">
-          <button class="boton arista" id="add-edge-button">Agregar Arista</button>
-          <button class="boton arista" id="delete-edge-button">Eliminar Arista</button>
-          <button class="boton arista" id="modify-edge-button">Modificar Arista</button>
-        </div>
-      </div>
-    </section>
+    </div>
   </main>
   <footer>
     <h2>Trabajo hecho por : </h2>
@@ -71,6 +77,7 @@
     <p><a href="https://github.com/dvar98/html.git" target="_blank">GitHub</a></p>
   </footer>
 </body>
+<script src="./dto/graphData.js"></script>
 <script src="pruebasFuncionado.js"></script>
 
 </html>
