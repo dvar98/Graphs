@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const nodoInicio_input = document.getElementById("inicio_input");
   const nodoFin_input = document.getElementById("fin_input");
 
-  const node_attr = "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: move;";
-  const nodeLabel_attr = "text-anchor: middle; dominant-baseline: central; fill: white;";
+  const node_attr = "stroke-width: 1; stroke: rgb(51, 51, 51); fill: rgb(161 204 245); cursor: move;";
+  const nodeLabel_attr = "text-anchor: middle; dominant-baseline: central; color: black;";
   const link_attr = "cursor: pointer;"
 
   // Configuración de la visualización
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .enter().append("circle")
     .attr("class", "graph-node")
     .attr("r", 20)
-    .attr("fill", "rgb(0, 100, 199)")
+    // .attr("fill", "rgb(0, 100, 199)")
     .attr("style", node_attr)
     .call(d3.drag()
       .on("start", dragStarted)
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .data(graphData.nodes)
     .enter().append("text")
     .attr("class", "node-label invisible")
-    .text(d => d.id)
+    .text(d => `${d.id}: ${d.name}`) //Texto a colocar en el label
     .attr("style", nodeLabel_attr)
 
   // Actualizar la simulación en cada fotograma
@@ -166,6 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  //Eliminar Nodo
   const deleteNodeButton = document.getElementById("delete-node-button")
   deleteNodeButton.addEventListener("click", deleteNodePopup);
 
@@ -199,16 +200,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Si no existe, agregarlo
     if (!linkExists) {
-      if (source.id < target.id) {
-        graphData.nodes[source.id].postrequisites.push(target.id)
-        graphData.nodes[target.id].prerequisites.push(source.id)
-      } else if (source.id > target.id) {
-        graphData.nodes[target.id].postrequisites.push(source.id)
-        graphData.nodes[source.id].prerequisites.push(target.id)
-      }
+      const sourceNode = graphData.nodes.find(node => node.id === source.id);
+      const targetNode = graphData.nodes.find(node => node.id === target.id);
 
-      graphData.links.push({ source: source.id, target: target.id });
-      updateVisualization();
+      if (sourceNode && targetNode) {
+        if (source.id < target.id) {
+          sourceNode.postrequisites.push(target.id);
+          targetNode.prerequisites.push(source.id);
+        } else if (source.id > target.id) {
+          targetNode.postrequisites.push(source.id);
+          sourceNode.prerequisites.push(target.id);
+        }
+
+        graphData.links.push({ source: source.id, target: target.id });
+        updateVisualization();
+      }
     }
   }
 
@@ -221,12 +227,12 @@ document.addEventListener("DOMContentLoaded", function () {
   })
 
   function deleteLink(link1, link2) {
+    console.log(graphData.links);
     graphData.links = graphData.links.filter(link =>
       (link.source.id !== link1 && link.target.id !== link2)
     );
-
-    // graphData.links = graphData.links.filter(link => link.source.id !== 1)
     console.log(graphData.links);
+    // graphData.links = graphData.links.filter(link => link.source.id !== 1)
     updateVisualization()
   }
 
@@ -250,7 +256,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   function updateVisualization() {
+    for (let i = 0; i < graphData.nodes.length; i++) {
+      graphData.nodes[i].id = i;
+    }
+    console.log(graphData.nodes);
     // Actualizar enlaces existentes
+    console.log(graphData.links);
     links = linkGroup.selectAll("line")
       .data(graphData.links);
 
@@ -273,8 +284,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("r", 20)
       .attr("class", "graph-node")
       .attr("style", node_attr)
-      .attr("r", 20)
-      .attr("fill", "rgb(0, 100, 199)")
       .call(d3.drag()
         .on("start", dragStarted)
         .on("drag", dragging)
@@ -285,15 +294,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Actualizar etiquetas de nodos existentes
     nodeLabels = svg.selectAll(".node-label")
-      .data(graphData.nodes, d => d.id);
+      .data(graphData.nodes, d => `${d.id}: ${d.name}`);
 
     nodeLabels.exit().remove(); // Eliminar etiquetas no utilizadas
 
     nodeLabels = nodeLabels.enter().append("text")
       .attr("class", "node-label invisible")
-      .text(d => d.id)
       .attr("style", nodeLabel_attr)
-      .merge(nodeLabels); // Combinar etiquetas de nodos existentes y nuevas
+      .merge(nodeLabels) // Combinar etiquetas de nodos existentes y nuevas
+      .text(d => `${d.id}: ${d.name}`);
 
     // Actualizar la simulación con los datos actualizados
     info();
@@ -347,7 +356,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Muestra la información del link cuando el mouse está sobre él
     links
       .on("mouseover", (event, d) => {
-        console.log(event)
         tiempoLink_input.setAttribute("value", d.source.duration);
         nodoInicio_input.setAttribute("value", d.source.id);
         nodoFin_input.setAttribute("value", d.target.id);
