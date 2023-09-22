@@ -126,8 +126,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function openNodePopup() {
     const nodeName = prompt("Ingrese el nombre del nuevo nodo:");
-    const duration = prompt("Ingresa la duracion : ")
-    const cost = prompt("Ingresa costo : ")
+    const duration = parseInt(prompt("Ingresa la duracion : "));
+    const cost = parseInt(prompt("Ingresa costo : "));
     if (nodeName) {
       const newNode = {
         id: graphData.nodes.length,
@@ -190,6 +190,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  //modificar nodo
+  const modifyNodeButton = document.getElementById("modify-node-button")
+  modifyNodeButton.addEventListener("click", modifyNodePopup);
+
+  function modifyNodePopup() {
+    let modifyNodeId = parseInt(prompt("Ingrese el ID del nodo a modificar:"));
+    let node = graphData.nodes[modifyNodeId]
+    if (node) {
+      node.name = prompt('Ingrese el nombre modificado:')
+      node.duration = parseInt(prompt('Ingrese la duracion del nodo moficado'));
+      node.cost = parseInt(prompt('Ingrese el costo del nodo modificado:'));
+    };
+    updateVisualization();
+
+  }
+
 
   // Función para agregar un enlace entre dos nodos
   function addLink(source, target) {
@@ -227,12 +243,13 @@ document.addEventListener("DOMContentLoaded", function () {
   })
 
   function deleteLink(link1, link2) {
-    console.log(graphData.links);
-    graphData.links = graphData.links.filter(link =>
-      (link.source.id !== link1 && link.target.id !== link2)
-    );
-    console.log(graphData.links);
-    // graphData.links = graphData.links.filter(link => link.source.id !== 1)
+    graphData.links = graphData.links.filter(function (link) {
+      if (link.source.id !== link1) {
+        return link
+      } else if (link.target.id !== link2) {
+        return link
+      }
+    });
     updateVisualization()
   }
 
