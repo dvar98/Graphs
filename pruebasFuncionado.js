@@ -359,12 +359,43 @@ document.addEventListener("DOMContentLoaded", function () {
       })
   }
 
-    // funcion para descargar el grafo actual
+  // funcion para descargar el grafo actual
   const downloadButton = document.getElementById("download-button");
   downloadButton.addEventListener("click", downloadGraph);
 
   function downloadGraph() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(graphData));
+    let atributosNodoPermitidos = ["id", "name", "duration", "cost", "prerequisites", "postrequisites"];
+    let atributosLinkPermitidos = ["source", "target"];
+    let nodes = [];
+    let links = [];
+
+    graphData.nodes.forEach(element => {
+      let node = {};
+      Object.keys(element).forEach(function (key) {
+        if (atributosNodoPermitidos.includes(key)) {
+          node[key] = element[key];
+        }
+      });
+      nodes.push(node)
+    });
+
+    graphData.links.forEach(element => {
+      let link = {};
+      Object.keys(element).forEach(function (key) {
+        if (atributosLinkPermitidos.includes(key)) {
+          link[key] = element[key].id
+        }
+      });
+      links.push(link)
+    });
+
+    let downloadGrafo = {
+      nodes: nodes,
+      links: links,
+    };
+
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(downloadGrafo));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
     downloadAnchorNode.setAttribute("download", "graph.json");
@@ -373,22 +404,16 @@ document.addEventListener("DOMContentLoaded", function () {
     downloadAnchorNode.remove();
   }
 
-  // funcion para cargar un grafo
-  const loadButton = document.getElementById("load-button");
-  loadButton.addEventListener("click", loadGraph);
+  const fileInput = document.getElementById("cargarBtn");
+  fileInput.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      graphData = JSON.parse(event.target.result);
+      updateVisualization();
+    };
+    reader.readAsText(file);
+  });
 
-  function loadGraph() {
-    const fileInput = document.getElementById("file-input");
-    fileInput.click();
-    fileInput.addEventListener("change", (event) => {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const graphData = JSON.parse(event.target.result);
-        updateVisualization();
-      };
-      reader.readAsText(file);
-    });
-  }
-  
+
 });

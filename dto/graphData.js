@@ -1,6 +1,6 @@
 const descargarBtn = document.getElementById("descargarBtn");
 
-const graphData = {
+let graphData = {
     // Estructura de datos de los nodos y relaciones
     // Ejemplo:
     nodes: [
