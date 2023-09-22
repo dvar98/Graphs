@@ -358,4 +358,37 @@ document.addEventListener("DOMContentLoaded", function () {
         nodoFin_input.setAttribute("value", "");
       })
   }
+
+    // funcion para descargar el grafo actual
+  const downloadButton = document.getElementById("download-button");
+  downloadButton.addEventListener("click", downloadGraph);
+
+  function downloadGraph() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(graphData));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "graph.json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
+
+  // funcion para cargar un grafo
+  const loadButton = document.getElementById("load-button");
+  loadButton.addEventListener("click", loadGraph);
+
+  function loadGraph() {
+    const fileInput = document.getElementById("file-input");
+    fileInput.click();
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const graphData = JSON.parse(event.target.result);
+        updateVisualization();
+      };
+      reader.readAsText(file);
+    });
+  }
+  
 });
