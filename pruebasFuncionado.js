@@ -12,33 +12,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const nodoInicio_input = document.getElementById("inicio_input");
   const nodoFin_input = document.getElementById("fin_input");
 
-  const node_attr = "stroke-width: 2; stroke: rgb(51, 51, 51); fill: rgb(0, 100, 199); cursor: move;";
-  const nodeLabel_attr = "text-anchor: middle; dominant-baseline: central; fill: white;";
+  const node_attr = "stroke-width: 1; stroke: rgb(51, 51, 51); fill: rgb(161 204 245); cursor: move;";
+  const nodeLabel_attr = "text-anchor: middle; dominant-baseline: central; color: black;";
   const link_attr = "cursor: pointer;"
 
-  const graphData = {
-    // Estructura de datos de los nodos y relaciones
-    // Ejemplo:
-    nodes: [
-      { id: 0, name: "0", duration: 5, cost: 100, prerequisites: [], postrequisites: [1] },
-      { id: 1, name: "1", duration: 3, cost: 50, prerequisites: [0], postrequisites: [2] },
-      { id: 2, name: "2", duration: 2, cost: 20, prerequisites: [1], postrequisites: [3] },
-      { id: 3, name: "3", duration: 4, cost: 80, prerequisites: [2], postrequisites: [4] },
-      { id: 4, name: "4", duration: 3, cost: 60, prerequisites: [3], postrequisites: [6] },
-      { id: 5, name: "5", duration: 2, cost: 40, prerequisites: [4], postrequisites: [] },
-    ],
-    links: [
-      { source: 0, target: 1 },
-      { source: 1, target: 2 },
-      { source: 2, target: 3 },
-      { source: 3, target: 4 },
-      { source: 4, target: 5 },
-
-    ],
-  };
   // Configuración de la visualización
   const width = graph_container.offsetWidth
   const height = graph_container.offsetHeight
+
+  console.log(graphData);
 
   // Crear el lienzo SVG para la visualización
   const svg = d3.select("#graph-container")
@@ -73,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .enter().append("circle")
     .attr("class", "graph-node")
     .attr("r", 20)
-    .attr("fill", "rgb(0, 100, 199)")
+    // .attr("fill", "rgb(0, 100, 199)")
     .attr("style", node_attr)
     .call(d3.drag()
       .on("start", dragStarted)
@@ -85,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .data(graphData.nodes)
     .enter().append("text")
     .attr("class", "node-label invisible")
-    .text(d => d.id)
+    .text(d => `${d.id}: ${d.name}`) //Texto a colocar en el label
     .attr("style", nodeLabel_attr)
 
   // Actualizar la simulación en cada fotograma
@@ -144,8 +126,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function openNodePopup() {
     const nodeName = prompt("Ingrese el nombre del nuevo nodo:");
-    const duration = prompt("Ingresa la duracion : ")
-    const cost = prompt("Ingresa costo : ")
+    const duration = parseInt(prompt("Ingresa la duracion : "));
+    const cost = parseInt(prompt("Ingresa costo : "));
     if (nodeName) {
       const newNode = {
         id: graphData.nodes.length,
@@ -184,6 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  //Eliminar Nodo
   const deleteNodeButton = document.getElementById("delete-node-button")
   deleteNodeButton.addEventListener("click", deleteNodePopup);
 
@@ -207,6 +190,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  //modificar nodo
+  const modifyNodeButton = document.getElementById("modify-node-button")
+  modifyNodeButton.addEventListener("click", modifyNodePopup);
+
+  function modifyNodePopup() {
+    let modifyNodeId = parseInt(prompt("Ingrese el ID del nodo a modificar:"));
+    let node = graphData.nodes[modifyNodeId]
+    if (node) {
+      node.name = prompt('Ingrese el nombre modificado:')
+      node.duration = parseInt(prompt('Ingrese la duracion del nodo moficado'));
+      node.cost = parseInt(prompt('Ingrese el costo del nodo modificado:'));
+    };
+    updateVisualization();
+
+  }
+
 
   // Función para agregar un enlace entre dos nodos
   function addLink(source, target) {
@@ -217,16 +216,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Si no existe, agregarlo
     if (!linkExists) {
-      if (source.id < target.id) {
-        graphData.nodes[source.id].postrequisites.push(target.id)
-        graphData.nodes[target.id].prerequisites.push(source.id)
-      } else if (source.id > target.id) {
-        graphData.nodes[target.id].postrequisites.push(source.id)
-        graphData.nodes[source.id].prerequisites.push(target.id)
-      }
+      const sourceNode = graphData.nodes.find(node => node.id === source.id);
+      const targetNode = graphData.nodes.find(node => node.id === target.id);
 
-      graphData.links.push({ source: source.id, target: target.id });
-      updateVisualization();
+      if (sourceNode && targetNode) {
+        if (source.id < target.id) {
+          sourceNode.postrequisites.push(target.id);
+          targetNode.prerequisites.push(source.id);
+        } else if (source.id > target.id) {
+          targetNode.postrequisites.push(source.id);
+          sourceNode.prerequisites.push(target.id);
+        }
+
+        graphData.links.push({ source: source.id, target: target.id });
+        updateVisualization();
+      }
     }
   }
 
@@ -239,12 +243,13 @@ document.addEventListener("DOMContentLoaded", function () {
   })
 
   function deleteLink(link1, link2) {
-    graphData.links = graphData.links.filter(link =>
-      (link.source.id !== link1 && link.target.id !== link2)
-    );
-
-    // graphData.links = graphData.links.filter(link => link.source.id !== 1)
-    console.log(graphData.links);
+    graphData.links = graphData.links.filter(function (link) {
+      if (link.source.id !== link1) {
+        return link
+      } else if (link.target.id !== link2) {
+        return link
+      }
+    });
     updateVisualization()
   }
 
@@ -268,7 +273,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   function updateVisualization() {
+    for (let i = 0; i < graphData.nodes.length; i++) {
+      graphData.nodes[i].id = i;
+    }
+    console.log(graphData.nodes);
     // Actualizar enlaces existentes
+    console.log(graphData.links);
     links = linkGroup.selectAll("line")
       .data(graphData.links);
 
@@ -291,8 +301,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("r", 20)
       .attr("class", "graph-node")
       .attr("style", node_attr)
-      .attr("r", 20)
-      .attr("fill", "rgb(0, 100, 199)")
       .call(d3.drag()
         .on("start", dragStarted)
         .on("drag", dragging)
@@ -303,15 +311,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Actualizar etiquetas de nodos existentes
     nodeLabels = svg.selectAll(".node-label")
-      .data(graphData.nodes, d => d.id);
+      .data(graphData.nodes, d => `${d.id}: ${d.name}`);
 
     nodeLabels.exit().remove(); // Eliminar etiquetas no utilizadas
 
     nodeLabels = nodeLabels.enter().append("text")
       .attr("class", "node-label invisible")
-      .text(d => d.id)
       .attr("style", nodeLabel_attr)
-      .merge(nodeLabels); // Combinar etiquetas de nodos existentes y nuevas
+      .merge(nodeLabels) // Combinar etiquetas de nodos existentes y nuevas
+      .text(d => `${d.id}: ${d.name}`);
 
     // Actualizar la simulación con los datos actualizados
     info();
@@ -365,7 +373,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Muestra la información del link cuando el mouse está sobre él
     links
       .on("mouseover", (event, d) => {
-        console.log(event)
         tiempoLink_input.setAttribute("value", d.source.duration);
         nodoInicio_input.setAttribute("value", d.source.id);
         nodoFin_input.setAttribute("value", d.target.id);
@@ -376,4 +383,62 @@ document.addEventListener("DOMContentLoaded", function () {
         nodoFin_input.setAttribute("value", "");
       })
   }
+
+  // funcion para descargar el grafo actual
+  const downloadButton = document.getElementById("download-button");
+  downloadButton.addEventListener("click", downloadGraph);
+
+  function downloadGraph() {
+    let atributosNodoPermitidos = ["id", "name", "duration", "cost", "prerequisites", "postrequisites"];
+    let atributosLinkPermitidos = ["source", "target"];
+    let nodes = [];
+    let links = [];
+
+    graphData.nodes.forEach(element => {
+      let node = {};
+      Object.keys(element).forEach(function (key) {
+        if (atributosNodoPermitidos.includes(key)) {
+          node[key] = element[key];
+        }
+      });
+      nodes.push(node)
+    });
+
+    graphData.links.forEach(element => {
+      let link = {};
+      Object.keys(element).forEach(function (key) {
+        if (atributosLinkPermitidos.includes(key)) {
+          link[key] = element[key].id
+        }
+      });
+      links.push(link)
+    });
+
+    let downloadGrafo = {
+      nodes: nodes,
+      links: links,
+    };
+
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(downloadGrafo));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "graph.json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
+
+  const fileInput = document.getElementById("cargarBtn");
+  fileInput.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      graphData = JSON.parse(event.target.result);
+      updateVisualization();
+    };
+    reader.readAsText(file);
+  });
+
+
 });
