@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const graph_container = document.getElementById("graph-container");
 
   const all_inputs = document.querySelector("info-box-content input");
+  const id_input = document.getElementById("id_input");
   const nombre_input = document.getElementById("nombre_input");
   const duracion_input = document.getElementById("duracion_input");
   const costo_input = document.getElementById("costo_input");
@@ -27,6 +28,17 @@ document.addEventListener("DOMContentLoaded", function () {
     .append("svg")
     .attr("style", `width: ${width}; height: ${height}`)
 
+  // Define el marcador de la flecha
+  svg.append("defs").append("marker")
+    .attr("id", "arrowhead")
+    .attr("viewBox", "0 -5 10 10") // Ajusta la vista del marcador
+    .attr("refX", 22) // Cambia la posición del marcador en relación con el punto final del camino
+    .attr("markerWidth", 3) // Ancho del marcador
+    .attr("markerHeight", 3) // Alto del marcador
+    .attr("orient", "auto") // Ajusta la orientación automáticamente
+    .append("path")
+    .attr("d", "M0,-5L10,0L0,5"); // Forma de la flecha
+
   // Crear un grupo para las líneas de los enlaces
   const linkGroup = svg.append("g").attr("id", "linkGroup");
 
@@ -46,7 +58,9 @@ document.addEventListener("DOMContentLoaded", function () {
     .attr("class", "link")
     .attr("style", link_attr)
     .attr("stroke", "#444")
-    .attr("stroke-width", 8);
+    .attr("stroke-width", 5) // Cambia el ancho de la línea si es necesario
+    .attr("marker-end", "url(#arrowhead)"); // Agrega la flecha al final de la línea
+
 
 
   // Crear los nodos
@@ -67,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .data(graphData.nodes)
     .enter().append("text")
     .attr("class", "node-label invisible")
-    .text(d => `${d.id}: ${d.name}`) //Texto a colocar en el label
+    .text(d => `${d.name}`) //Texto a colocar en el label
     .attr("style", nodeLabel_attr)
 
   // Actualizar la simulación en cada fotograma
@@ -125,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("add-node-button").addEventListener("click", openNodePopup);
 
   function openNodePopup() {
-    const nodeName = prompt("Ingrese el nombre del nuevo nodo:");
+    const nodeName = prompt("Ingrese el nombre del nuevo nodo:").toUpperCase();
     const duration = parseInt(prompt("Ingresa la duracion : "));
     const cost = parseInt(prompt("Ingresa costo : "));
     if (nodeName) {
@@ -146,45 +160,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
-  // Configurar el evento click para agregar aristas
-  const addEdgeButton = document.getElementById("add-edge-button").addEventListener("click", () => {
-    let sourceNodeId = prompt("Ingrese el ID del nodo de origen:");
-    let targetNodeId = prompt("Ingrese el ID del nodo de destino:");
-
-    openEdgePopup(sourceNodeId, targetNodeId)
-  });
-
-  function openEdgePopup(sourceNodeId, targetNodeId) {
-
-    sourceNode = graphData.nodes.find(node => node.id === parseInt(sourceNodeId));
-    targetNode = graphData.nodes.find(node => node.id === parseInt(targetNodeId));
-
-    if (sourceNode && targetNode) {
-      addLink(sourceNode, targetNode);
-    } else {
-      alert("Nodos no encontrados. Asegúrese de ingresar IDs válidos.");
-    }
-  }
-
   //Eliminar Nodo
   const deleteNodeButton = document.getElementById("delete-node-button")
   deleteNodeButton.addEventListener("click", deleteNodePopup);
 
   function deleteNodePopup() {
-    let deleteNodeId = parseInt(prompt("Ingrese el ID del nodo a eliminar:"));
+    let deleteNodeName = prompt("Ingrese el nombre del nodo a eliminar:").toUpperCase();
 
-    if (isNaN(deleteNodeId)) {
-      alert('ID de nodo no válido');
+    if (!deleteNodeName) {
+      alert('Nombre de nodo no válido');
       return;
     }
 
-    const nodeIndex = graphData.nodes.findIndex(node => node.id === deleteNodeId);
+    const nodeIndex = graphData.nodes.findIndex(node => node.name == deleteNodeName);
 
     if (nodeIndex === -1) {
       alert('Nodo no encontrado');
     } else {
       graphData.nodes.splice(nodeIndex, 1);
-      graphData.links = graphData.links.filter(link => link.source.id !== deleteNodeId && link.target.id !== deleteNodeId);
+      graphData.links = graphData.links.filter(link => link.source.id !== nodeIndex && link.target.id !== nodeIndex);
 
       updateVisualization();
     }
@@ -195,37 +189,55 @@ document.addEventListener("DOMContentLoaded", function () {
   modifyNodeButton.addEventListener("click", modifyNodePopup);
 
   function modifyNodePopup() {
-    let modifyNodeId = parseInt(prompt("Ingrese el ID del nodo a modificar:"));
-    let node = graphData.nodes[modifyNodeId]
+    let modifyNodeName = prompt("Ingrese el nombre del nodo a modificar:").toUpperCase();
+    const node = graphData.nodes.find(node => node.name == modifyNodeName);
     if (node) {
-      node.name = prompt('Ingrese el nombre modificado:')
-      node.duration = parseInt(prompt('Ingrese la duracion del nodo moficado'));
-      node.cost = parseInt(prompt('Ingrese el costo del nodo modificado:'));
-    };
+      node.name = prompt('Ingrese el nombre modificado:').toUpperCase();
+      node.duration = parseInt(prompt(`Ingrese la duracion del nodo moficado: (Duracion actual: ${node.duration})`));
+      node.cost = parseInt(prompt(`Ingrese el costo del nodo modificado: (Costo Actual: ${node.cost})`));
+    } else {
+      alert('Nodo no encontrado')
+      return
+    }
     updateVisualization();
-
   }
 
+  // Configurar el evento click para agregar aristas
+  document.getElementById("add-edge-button").addEventListener("click", () => {
+    let sourceNodeName = prompt("Ingrese el nombre del nodo de origen:").toUpperCase();
+    let targetNodeName = prompt("Ingrese el nombre del nodo de destino:").toUpperCase();
+
+    openEdgePopup(sourceNodeName, targetNodeName)
+  });
+
+  function openEdgePopup(sourceNodeName, targetNodeName) {
+
+    sourceNode = graphData.nodes.find(node => node.name == sourceNodeName);
+    targetNode = graphData.nodes.find(node => node.name == targetNodeName);
+
+    if (sourceNode && targetNode) {
+      addLink(sourceNode, targetNode);
+    } else {
+      alert("Nodos no encontrados. Asegúrese de ingresar nombres válidos.");
+    }
+  }
 
   // Función para agregar un enlace entre dos nodos
   function addLink(source, target) {
     // Verificar si el enlace ya existe
     const linkExists = graphData.links.some(link => {
-      return (link.source === source.id && link.target === target.id);
+      return (link.source.id === source.id && link.target.id === target.id);
     });
 
     // Si no existe, agregarlo
     if (!linkExists) {
-      const sourceNode = graphData.nodes.find(node => node.id === source.id);
-      const targetNode = graphData.nodes.find(node => node.id === target.id);
-
-      if (sourceNode && targetNode) {
+      if (source && target) {
         if (source.id < target.id) {
-          sourceNode.postrequisites.push(target.id);
-          targetNode.prerequisites.push(source.id);
+          source.postrequisites.push(target.id);
+          target.prerequisites.push(source.id);
         } else if (source.id > target.id) {
-          targetNode.postrequisites.push(source.id);
-          sourceNode.prerequisites.push(target.id);
+          target.postrequisites.push(source.id);
+          source.prerequisites.push(target.id);
         }
 
         graphData.links.push({ source: source.id, target: target.id });
@@ -236,17 +248,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const deleteLinkButton = document.getElementById("delete-edge-button")
   deleteLinkButton.addEventListener("click", () => {
-    let link1 = parseInt(prompt("Ingrese el ID del nodo inicio del arista"));
-    let link2 = parseInt(prompt("Ingrese el ID del nodo fin del arista"));
+    let sourceNodeName = prompt("Ingrese el nombre del nodo inicio del arista").toUpperCase();
+    let targetNodeName = prompt("Ingrese el nombre del nodo fin del arista").toUpperCase();
 
-    deleteLink(link1, link2)
+    sourceIdNode = graphData.nodes.findIndex(node => node.name == sourceNodeName);
+    targetIdNode = graphData.nodes.findIndex(node => node.name == targetNodeName);
+
+    deleteLink(sourceIdNode, targetIdNode)
   })
 
-  function deleteLink(link1, link2) {
+  function deleteLink(sourceIdNode, targetIdNode) {
     graphData.links = graphData.links.filter(function (link) {
-      if (link.source.id !== link1) {
+      if (link.source.id !== sourceIdNode) {
         return link
-      } else if (link.target.id !== link2) {
+      } else if (link.target.id !== targetIdNode) {
         return link
       }
     });
@@ -257,14 +272,17 @@ document.addEventListener("DOMContentLoaded", function () {
   updateLinkButton.addEventListener("click", updateLink)
 
   function updateLink() {
-    let link1 = parseInt(prompt("Ingrese el ID del nodo inicio del arista a actualizar"));
-    let link2 = parseInt(prompt("Ingrese el ID del nodo fin del arista a actualizar"));
+    const sourceNodeName = prompt("Ingrese el nombre del nodo inicio del arista a actualizar").toUpperCase();
+    const targetNodeName = prompt("Ingrese el nombre del nodo fin del arista a actualizar").toUpperCase();
 
-    const newLink1 = parseInt(prompt("Ingrese el nuevo ID del nodo inicio del arista"));
-    const newLink2 = parseInt(prompt("Ingrese el nuevo ID del nodo fin del arista"));
+    const sourceNameNewLink1 = prompt("Ingrese el nuevo nombre del nodo inicio del arista").toUpperCase();
+    const sourceNameNewLink2 = prompt("Ingrese el nuevo nombre del nodo fin del arista").toUpperCase();
 
-    deleteLink(link1, link2)
-    openEdgePopup(newLink1, newLink2)
+    sourceIdNode = graphData.nodes.findIndex(node => node.name == sourceNodeName);
+    targetIdNode = graphData.nodes.findIndex(node => node.name == targetNodeName);
+
+    deleteLink(sourceIdNode, targetIdNode)
+    openEdgePopup(sourceNameNewLink1, sourceNameNewLink2)
 
     console.log(graphData.links)
 
@@ -288,7 +306,8 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("class", "link")
       .attr("style", link_attr)
       .attr("stroke", "#444")
-      .attr("stroke-width", 8)
+      .attr("stroke-width", 5) // Cambia el ancho de la línea si es necesario
+      .attr("marker-end", "url(#arrowhead)") // Agrega la flecha al final de la línea
       .merge(links); // Combinar enlaces existentes y nuevos
 
     // Actualizar nodos existentes
@@ -311,7 +330,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Actualizar etiquetas de nodos existentes
     nodeLabels = svg.selectAll(".node-label")
-      .data(graphData.nodes, d => `${d.id}: ${d.name}`);
+      .data(graphData.nodes, d => `${d.name}`);
 
     nodeLabels.exit().remove(); // Eliminar etiquetas no utilizadas
 
@@ -319,7 +338,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("class", "node-label invisible")
       .attr("style", nodeLabel_attr)
       .merge(nodeLabels) // Combinar etiquetas de nodos existentes y nuevas
-      .text(d => `${d.id}: ${d.name}`);
+      .text(d => `${d.name}`);
 
     // Actualizar la simulación con los datos actualizados
     info();
@@ -355,6 +374,7 @@ document.addEventListener("DOMContentLoaded", function () {
     nodes
       .on("mouseover", (event, d) => {
         // Muestra la información del nodo cuando el mouse está sobre él
+        id_input.setAttribute("value", d.id);
         nombre_input.setAttribute("value", d.name);
         duracion_input.setAttribute("value", d.duration);
         costo_input.setAttribute("value", d.cost);
@@ -363,6 +383,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .on("mouseout", (d) => {
         // Oculta la información cuando el mouse sale del nodo
+        id_input.setAttribute("value", "");
         nombre_input.setAttribute("value", "");
         duracion_input.setAttribute("value", "");
         costo_input.setAttribute("value", "");
@@ -486,7 +507,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Matriz de incidencia", matriz);
   }
 
-    const dijkstraButton = document.getElementById("dijkstra-button");
+  const dijkstraButton = document.getElementById("dijkstra-button");
   dijkstraButton.addEventListener("click", dijkstra);
 
   function dijkstra() {
@@ -506,8 +527,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log(matriz);
 
-    let nodoInicial = parseInt(prompt("Ingrese el nodo inicial:"));
-    let nodoFinal = parseInt(prompt("Ingrese el nodo final:"));
+    let nodoInicialName = prompt("Ingrese el nombre del nodo inicial:").toUpperCase();
+    let nodoFinalName = prompt("Ingrese el nombre del nodo final:").toUpperCase();
+
+    nodoInicial = graphData.nodes.findIndex(node => node.name == nodoInicialName);
+    nodoFinal = graphData.nodes.findIndex(node => node.name == nodoFinalName);
+
 
     let distancias = new Array(numNodes).fill(Infinity);
     let visitados = new Array(numNodes).fill(false);
@@ -533,6 +558,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (visitados[v] === false && matriz[u][v] !== 0 && distancias[u] !== Infinity && distancias[u] + matriz[u][v] < distancias[v]) {
           distancias[v] = distancias[u] + matriz[u][v];
         }
+      }
+
+    }
+
+    for (let i = 0; i < distancias.length; i++) {
+      let nodeId = distancias[i];
+      if (nodeId !== Infinity) {
+        let node = graphData.nodes.find(node => node.id == nodeId);
+        distancias[i] = node.name;  
+      } else {
+        return
       }
     }
 

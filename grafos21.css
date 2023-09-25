@@ -130,7 +130,7 @@ main{
 }
 
 #info-node-content {
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 #info-link-content {
