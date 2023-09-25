@@ -48,6 +48,13 @@ document.addEventListener("DOMContentLoaded", function () {
     .attr("stroke", "#444")
     .attr("stroke-width", 8);
 
+  let linkTexts = linkGroup.selectAll(".link-text")
+  .data(graphData.links)
+  .enter().append("text")
+  .attr("class", "link-text")
+  .attr("text-anchor", "middle") // Alinea el texto en el medio del enlace
+  .attr("dy", -10) // Ajusta la posición vertical del texto (puedes ajustar este valor según tus necesidades)
+  .text(d => d.source.duration) // Utiliza la duración del nodo fuente como texto
 
   // Crear los nodos
   let nodes = nodeGroup.selectAll(".node")
@@ -86,6 +93,10 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("x", d => d.x)
       .attr("y", d => d.y);
 
+    linkTexts
+    .attr("x", d => (d.source.x + d.target.x) / 2) // Coloca el texto en el centro del enlace en el eje X
+    .attr("y", d => (d.source.y + d.target.y) / 2); // Coloca el texto en el centro del enlace en el eje Y
+    
   });
 
   // Habilitar arrastre de nodos
