@@ -486,4 +486,58 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Matriz de incidencia", matriz);
   }
 
+    const dijkstraButton = document.getElementById("dijkstra-button");
+  dijkstraButton.addEventListener("click", dijkstra);
+
+  function dijkstra() {
+    let nodes = simulation.nodes();
+    let links = simulation.force("link").links();
+
+    const numNodes = nodes.length;
+    const numLinks = links.length;
+
+    let matriz = new Array(numNodes).fill(null).map(() => new Array(numNodes).fill(0));
+
+    links.forEach(link => {
+      let source = link.source.index;
+      let target = link.target.index;
+      matriz[source][target] = 1;
+    });
+
+    console.log(matriz);
+
+    let nodoInicial = parseInt(prompt("Ingrese el nodo inicial:"));
+    let nodoFinal = parseInt(prompt("Ingrese el nodo final:"));
+
+    let distancias = new Array(numNodes).fill(Infinity);
+    let visitados = new Array(numNodes).fill(false);
+
+    distancias[nodoInicial] = 0;
+
+    for (let i = 0; i < numNodes - 1; i++) {
+      let min = Infinity;
+      let minIndex = -1;
+
+      for (let j = 0; j < numNodes; j++) {
+        if (visitados[j] === false && distancias[j] <= min) {
+          min = distancias[j];
+          minIndex = j;
+        }
+      }
+
+      let u = minIndex;
+
+      visitados[u] = true;
+
+      for (let v = 0; v < numNodes; v++) {
+        if (visitados[v] === false && matriz[u][v] !== 0 && distancias[u] !== Infinity && distancias[u] + matriz[u][v] < distancias[v]) {
+          distancias[v] = distancias[u] + matriz[u][v];
+        }
+      }
+    }
+
+    console.log(distancias);
+    console.log(distancias[nodoFinal]);
+  }
+
 });
