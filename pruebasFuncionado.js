@@ -440,7 +440,7 @@ document.addEventListener("DOMContentLoaded", function () {
     reader.readAsText(file);
   });
 
-    // Funcion para matriz de adyacencia
+  // Funcion para matriz de adyacencia
   const matrizButton = document.getElementById("matriz-button");
   matrizButton.addEventListener("click", matrizAdyacencia);
 
@@ -459,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
       matriz[source][target] = 1;
     });
 
-    console.log(matriz);
+    console.log("Matriz de adyacencia", matriz);
   }
 
   // Funcion para matriz de incidencia
@@ -483,7 +483,7 @@ document.addEventListener("DOMContentLoaded", function () {
       matriz[target][index] = -1;
     });
 
-    console.log(matriz);
+    console.log("Matriz de incidencia", matriz);
   }
 
 });
