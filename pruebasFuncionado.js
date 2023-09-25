@@ -440,5 +440,50 @@ document.addEventListener("DOMContentLoaded", function () {
     reader.readAsText(file);
   });
 
+    // Funcion para matriz de adyacencia
+  const matrizButton = document.getElementById("matriz-button");
+  matrizButton.addEventListener("click", matrizAdyacencia);
+
+  function matrizAdyacencia() {
+
+    let nodes = simulation.nodes();
+    let links = simulation.force("link").links();
+
+    const numNodes = nodes.length;
+
+    let matriz = new Array(numNodes).fill(null).map(() => new Array(numNodes).fill(0));
+
+    links.forEach(link => {
+      let source = link.source.index;
+      let target = link.target.index;
+      matriz[source][target] = 1;
+    });
+
+    console.log(matriz);
+  }
+
+  // Funcion para matriz de incidencia
+  const incidenciaButton = document.getElementById("incidencia-button");
+  incidenciaButton.addEventListener("click", matrizIncidencia);
+
+  function matrizIncidencia() {
+
+    let nodes = simulation.nodes();
+    let links = simulation.force("link").links();
+
+    const numNodes = nodes.length;
+    const numLinks = links.length;
+
+    let matriz = new Array(numNodes).fill(null).map(() => new Array(numLinks).fill(0));
+
+    links.forEach((link, index) => {
+      let source = link.source.index;
+      let target = link.target.index;
+      matriz[source][index] = 1;
+      matriz[target][index] = -1;
+    });
+
+    console.log(matriz);
+  }
 
 });
