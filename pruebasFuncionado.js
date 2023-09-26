@@ -4,26 +4,23 @@ document.addEventListener("DOMContentLoaded", function () {
   const all_inputs = document.querySelector("info-box-content input");
   const id_input = document.getElementById("id_input");
   const nombre_input = document.getElementById("nombre_input");
-  const duracion_input = document.getElementById("duracion_input");
   const costo_input = document.getElementById("costo_input");
   const prerequisito_input = document.getElementById("prerequisito_input");
   const postrequisito_input = document.getElementById("postrequisito_input");
 
-  const tiempoLink_input = document.getElementById("tiempo_input");
+  const duracion_input = document.getElementById("duracion_input");
   const nodoInicio_input = document.getElementById("inicio_input");
   const nodoFin_input = document.getElementById("fin_input");
 
   const node_attr = "stroke-width: 1; stroke: rgb(51, 51, 51); fill: rgb(161 204 245); cursor: move; r:20;";
   const nodeLabel_attr = "text-anchor: middle; dominant-baseline: central; color: black;";
-  const link_attr = "cursor: pointer; stroke:#444; stroke-width: 5; marker-end:url(#arrowhead)"
+  const link_attr = "stroke:#444; stroke-width: 5; marker-end:url(#arrowhead)"
   const linkText_attr = "text-anchor: middle; dominant-baseline: central; fill:white;font-size: 14px";
-  const linkBack_attr = "stroke-width: 1; stroke: rgb(51, 51, 51); fill: rgba(0, 0, 0, 1); color:white; r:15;"
+  const linkBack_attr = "cursor: pointer; stroke-width: 1; stroke: rgb(51, 51, 51); fill: rgba(0, 0, 0, 1); color:white; r:15;"
 
   // Configuración de la visualización
   const width = graph_container.offsetWidth
   const height = graph_container.offsetHeight
-
-  console.log(graphData);
 
   // Crear el lienzo SVG para la visualización
   const svg = d3.select("#graph-container")
@@ -76,24 +73,22 @@ document.addEventListener("DOMContentLoaded", function () {
     linkBack.exit().remove();
 
     linkBack = linkBack.enter().append("circle")
-      .attr("class", "link-back invisible")
+      .attr("class", "link-back")
       .attr("style", linkBack_attr)
       .merge(linkBack);
 
 
     //Crear y actualizar links-labels (duracion)
     linkTexts = linkGroup.selectAll(".link-text")
-      .data(graphData.links, d => d.source.duration);
+      .data(graphData.links, d => d.duration);
 
     linkTexts.exit().remove();
 
     linkTexts = linkTexts.enter().append("text")
-      .text(d => d.source.duration) // Utiliza la duración del nodo fuente como texto
+      .text(d => d.duration) // Utiliza la duración del nodo fuente como texto
       .attr("class", "link-text invisible")
       .attr("style", linkText_attr)
       .merge(linkTexts)
-
-    console.log(linkTexts);
 
     // Crear y actulizar los nodos
     nodes = nodeGroup.selectAll("circle")
@@ -178,13 +173,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById("add-node-button").addEventListener("click", () => {
     const nodeName = prompt("Ingrese el nombre del nuevo nodo:").toUpperCase();
-    const duration = parseInt(prompt("Ingresa la duracion : "));
     const cost = parseInt(prompt("Ingresa costo : "));
     if (nodeName) {
       const newNode = {
         id: graphData.nodes.length,
         name: nodeName,
-        duration: duration,
         cost: cost,
         prerequisites: [],
         postrequisites: []
@@ -225,7 +218,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const node = graphData.nodes.find(node => node.name == modifyNodeName);
     if (node) {
       node.name = prompt('Ingrese el nombre modificado:').toUpperCase();
-      node.duration = parseInt(prompt(`Ingrese la duracion del nodo moficado: (Duracion actual: ${node.duration})`));
       node.cost = parseInt(prompt(`Ingrese el costo del nodo modificado: (Costo Actual: ${node.cost})`));
     } else {
       alert('Nodo no encontrado')
@@ -234,47 +226,43 @@ document.addEventListener("DOMContentLoaded", function () {
     updateVisualization();
   });
 
-  // Configurar el evento click para agregar aristas
+  // Agregar aristas
   document.getElementById("add-edge-button").addEventListener("click", () => {
     let sourceNodeName = prompt("Ingrese el nombre del nodo de origen:").toUpperCase();
     let targetNodeName = prompt("Ingrese el nombre del nodo de destino:").toUpperCase();
+    let durationLink = parseInt(prompt("Ingrese la duración del nuevo link:"));
 
-    openEdgePopup(sourceNodeName, targetNodeName)
+    openEdgePopup(sourceNodeName, targetNodeName, durationLink);
   });
 
-  function openEdgePopup(sourceNodeName, targetNodeName) {
+  function openEdgePopup(sourceNodeName, targetNodeName, durationLink) {
 
     sourceNode = graphData.nodes.find(node => node.name == sourceNodeName);
     targetNode = graphData.nodes.find(node => node.name == targetNodeName);
 
     if (sourceNode && targetNode) {
-      addLink(sourceNode, targetNode);
+      // Verificar si el enlace ya existe
+      const linkExists = graphData.links.some(link => {
+        return (link.source.id === sourceNode.id && link.target.id === targetNode.id);
+      });
+
+      // Si no existe, agregarlo
+      if (!linkExists) {
+        if (sourceNode && targetNode) {
+          if (sourceNode.id < targetNode.id) {
+            sourceNode.postrequisites.push(targetNode.id);
+            targetNode.prerequisites.push(sourceNode.id);
+          } else if (sourceNode.id > targetNode.id) {
+            targetNode.postrequisites.push(sourceNode.id);
+            sourceNode.prerequisites.push(targetNode.id);
+          }
+
+          graphData.links.push({ source: sourceNode, target: targetNode, duration: durationLink });
+          updateVisualization();
+        }
+      }
     } else {
       alert("Nodos no encontrados. Asegúrese de ingresar nombres válidos.");
-    }
-  }
-
-  // Función para agregar un enlace entre dos nodos
-  function addLink(source, target) {
-    // Verificar si el enlace ya existe
-    const linkExists = graphData.links.some(link => {
-      return (link.source.id === source.id && link.target.id === target.id);
-    });
-
-    // Si no existe, agregarlo
-    if (!linkExists) {
-      if (source && target) {
-        if (source.id < target.id) {
-          source.postrequisites.push(target.id);
-          target.prerequisites.push(source.id);
-        } else if (source.id > target.id) {
-          target.postrequisites.push(source.id);
-          source.prerequisites.push(target.id);
-        }
-
-        graphData.links.push({ source: source, target: target });
-        updateVisualization();
-      }
     }
   }
 
@@ -289,14 +277,18 @@ document.addEventListener("DOMContentLoaded", function () {
   })
 
   function deleteLink(sourceIdNode, targetIdNode) {
+    let deletedLink;
     graphData.links = graphData.links.filter(function (link) {
       if (link.source.id !== sourceIdNode) {
         return link
       } else if (link.target.id !== targetIdNode) {
         return link
+      } else {
+        deletedLink = link
       }
     });
     updateVisualization()
+    return deletedLink;
   }
 
   document.getElementById("modify-edge-button").addEventListener("click", () => {
@@ -309,10 +301,12 @@ document.addEventListener("DOMContentLoaded", function () {
     sourceIdNode = graphData.nodes.findIndex(node => node.name == sourceNodeName);
     targetIdNode = graphData.nodes.findIndex(node => node.name == targetNodeName);
 
-    deleteLink(sourceIdNode, targetIdNode)
-    openEdgePopup(sourceNameNewLink1, sourceNameNewLink2)
 
-    console.log(graphData.links)
+    let deletedLink = deleteLink(sourceIdNode, targetIdNode)
+    console.log(deletedLink);
+
+    const durationNewLink = parseInt(prompt(`Ingrese la duracion del link (Duracion Actual: ${deletedLink.duration})`))
+    openEdgePopup(sourceNameNewLink1, sourceNameNewLink2, durationNewLink)
 
     updateVisualization(); // Asegúrate de actualizar la visualización después de modificar los datos
   });
@@ -357,7 +351,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // Muestra la información del nodo cuando el mouse está sobre él
         id_input.setAttribute("value", d.id);
         nombre_input.setAttribute("value", d.name);
-        duracion_input.setAttribute("value", d.duration);
         costo_input.setAttribute("value", d.cost);
         prerequisito_input.setAttribute("value", d.prerequisites);
         postrequisito_input.setAttribute("value", d.postrequisites);
@@ -366,21 +359,20 @@ document.addEventListener("DOMContentLoaded", function () {
         // Oculta la información cuando el mouse sale del nodo
         id_input.setAttribute("value", "");
         nombre_input.setAttribute("value", "");
-        duracion_input.setAttribute("value", "");
         costo_input.setAttribute("value", "");
         prerequisito_input.setAttribute("value", "");
         postrequisito_input.setAttribute("value", "");
       })
 
     // Muestra la información del link cuando el mouse está sobre él
-    links
+    linkBack
       .on("mouseover", (event, d) => {
-        tiempoLink_input.setAttribute("value", d.source.duration);
+        duracion_input.setAttribute("value", d.duration);
         nodoInicio_input.setAttribute("value", d.source.id);
         nodoFin_input.setAttribute("value", d.target.id);
       })
       .on("mouseout", (d) => {
-        tiempoLink_input.setAttribute("value", "");
+        duracion_input.setAttribute("value", "");
         nodoInicio_input.setAttribute("value", "");
         nodoFin_input.setAttribute("value", "");
       })
@@ -388,35 +380,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // funcion para descargar el grafo actual
   document.getElementById("download-button").addEventListener("click", () => {
-    let atributosNodoPermitidos = ["id", "name", "duration", "cost", "prerequisites", "postrequisites"];
-    let atributosLinkPermitidos = ["source", "target"];
+    let atributosNodoPermitidos = ["id", "name", "cost", "prerequisites", "postrequisites"];
+    let atributosLinkPermitidos = ["source", "target", "duration"];
     let nodes = [];
     let links = [];
 
-    graphData.nodes.forEach(element => {
-      let node = {};
+    function filtrarAtributos(element, atributosPermitidos) {
+      let objetoFiltrado = {};
       Object.keys(element).forEach(function (key) {
-        if (atributosNodoPermitidos.includes(key)) {
-          node[key] = element[key];
+        if (atributosPermitidos.includes(key)) {
+          objetoFiltrado[key] = element[key];
         }
       });
-      nodes.push(node)
+      return objetoFiltrado;
+    }
+
+    graphData.nodes.forEach(element => {
+      nodes.push(filtrarAtributos(element, atributosNodoPermitidos));
     });
 
     graphData.links.forEach(element => {
-      let link = {};
-      Object.keys(element).forEach(function (key) {
-        if (atributosLinkPermitidos.includes(key)) {
-          link[key] = element[key].id
-        }
-      });
-      links.push(link)
+      let link = filtrarAtributos(element, atributosLinkPermitidos);
+      links.push(
+        {
+          source: link.source.id,
+          target: link.target.id,
+          duration: link.duration
+        });
     });
+
 
     let downloadGrafo = {
       nodes: nodes,
       links: links,
     };
+
+    console.log(downloadGrafo);
 
 
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(downloadGrafo));
@@ -428,6 +427,7 @@ document.addEventListener("DOMContentLoaded", function () {
     downloadAnchorNode.remove();
   });
 
+  // Cargar Grafo
   document.getElementById("cargarBtn").addEventListener("change", (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
