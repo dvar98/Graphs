@@ -13,9 +13,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const nodoInicio_input = document.getElementById("inicio_input");
   const nodoFin_input = document.getElementById("fin_input");
 
-  const node_attr = "stroke-width: 1; stroke: rgb(51, 51, 51); fill: rgb(161 204 245); cursor: move;";
+  const node_attr = "stroke-width: 1; stroke: rgb(51, 51, 51); fill: rgb(161 204 245); cursor: move; r:20;";
   const nodeLabel_attr = "text-anchor: middle; dominant-baseline: central; color: black;";
-  const link_attr = "cursor: pointer;"
+  const link_attr = "cursor: pointer; stroke:#444; stroke-width: 5; marker-end:url(#arrowhead)"
+  const linkText_attr = "text-anchor: middle; dominant-baseline: central; fill:white;font-size: 14px";
+  const linkBack_attr = "stroke-width: 1; stroke: rgb(51, 51, 51); fill: rgba(0, 0, 0, 1); color:white; r:15;"
 
   // Configuración de la visualización
   const width = graph_container.offsetWidth
@@ -47,49 +49,81 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Crear una simulación de fuerza para los nodos
   const simulation = d3.forceSimulation(graphData.nodes)
-    .force("charge", d3.forceManyBody().strength(-100))
-    .force("link", d3.forceLink(graphData.links).distance(100))
+    .force("charge", d3.forceManyBody().strength(-160))
+    .force("link", d3.forceLink(graphData.links).distance(95))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
-  // Crear los enlaces (conexiones)
-  let links = linkGroup.selectAll(".link")
-    .data(graphData.links)
-    .enter().append("line")
-    .attr("class", "link")
-    .attr("style", link_attr)
-    .attr("stroke", "#444")
-    .attr("stroke-width", 5) // Cambia el ancho de la línea si es necesario
-    .attr("marker-end", "url(#arrowhead)"); // Agrega la flecha al final de la línea
+  let links, linkBack, linkTexts, nodes, nodeLabels;
+  inicializationDraw();
 
 
-  let linkTexts = linkGroup.selectAll(".link-text")
-  .data(graphData.links)
-  .enter().append("text")
-  .attr("class", "link-text")
-  .attr("text-anchor", "middle") // Alinea el texto en el medio del enlace
-  .attr("dy", -10) // Ajusta la posición vertical del texto (puedes ajustar este valor según tus necesidades)
-  .text(d => d.source.duration) // Utiliza la duración del nodo fuente como texto
+  function inicializationDraw() {
+    // Crear y actualizar los enlaces (conexiones)
+    links = linkGroup.selectAll(".link")
+      .data(graphData.links);
 
-  // Crear los nodos
-  let nodes = nodeGroup.selectAll(".node")
-    .data(graphData.nodes)
-    .enter().append("circle")
-    .attr("class", "graph-node")
-    .attr("r", 20)
-    // .attr("fill", "rgb(0, 100, 199)")
-    .attr("style", node_attr)
-    .call(d3.drag()
-      .on("start", dragStarted)
-      .on("drag", dragging)
-      .on("end", dragEnded));
+    links.exit().remove(); // Eliminar enlaces no utilizados
 
-  // Agregar etiquetas a los nodos
-  let nodeLabels = nodeGroup.selectAll(".node-label")
-    .data(graphData.nodes)
-    .enter().append("text")
-    .attr("class", "node-label invisible")
-    .text(d => `${d.name}`) //Texto a colocar en el label
-    .attr("style", nodeLabel_attr)
+    links = links.enter().append("line")
+      .attr("class", "link")
+      .attr("style", link_attr)
+      .merge(links); // Combinar enlaces existentes y nuevos
+
+    //Crear y actualizar fondo de los links-labels
+    linkBack = linkGroup.selectAll(".link-back")
+      .data(graphData.links);
+
+    linkBack.exit().remove();
+
+    linkBack = linkBack.enter().append("circle")
+      .attr("class", "link-back invisible")
+      .attr("style", linkBack_attr)
+      .merge(linkBack);
+
+
+    //Crear y actualizar links-labels (duracion)
+    linkTexts = linkGroup.selectAll(".link-text")
+      .data(graphData.links, d => d.source.duration);
+
+    linkTexts.exit().remove();
+
+    linkTexts = linkTexts.enter().append("text")
+      .text(d => d.source.duration) // Utiliza la duración del nodo fuente como texto
+      .attr("class", "link-text invisible")
+      .attr("style", linkText_attr)
+      .merge(linkTexts)
+
+    console.log(linkTexts);
+
+    // Crear y actulizar los nodos
+    nodes = nodeGroup.selectAll("circle")
+      .data(graphData.nodes);
+
+    nodes.exit().remove();
+
+    nodes = nodes.enter().append("circle")
+      .attr("class", "graph-node")
+      .attr("style", node_attr)
+      .call(d3.drag()
+        .on("start", dragStarted)
+        .on("drag", dragging)
+        .on("end", dragEnded))
+      .merge(nodes);
+
+    // Crear y actualizar etiquetas a los nodos
+    nodeLabels = nodeGroup.selectAll(".node-label")
+      .data(graphData.nodes, d => `${d.name}`);
+
+    nodeLabels.exit().remove();
+
+    nodeLabels = nodeLabels.enter().append("text")
+      .attr("class", "node-label invisible")
+      .attr("style", nodeLabel_attr)
+      .merge(nodeLabels)
+      .text(d => `${d.name}`); //Texto a colocar en el label
+
+    info();
+  }
 
   // Actualizar la simulación en cada fotograma
   simulation.on("tick", () => {
@@ -107,10 +141,12 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("x", d => d.x)
       .attr("y", d => d.y);
 
+    linkBack
+      .attr("cx", d => (d.source.x + d.target.x) / 2) // Coloca el texto en el centro del enlace en el eje X
+      .attr("cy", d => (d.source.y + d.target.y) / 2); // Coloca el texto en el centro del enlace en el eje Y
     linkTexts
-    .attr("x", d => (d.source.x + d.target.x) / 2) // Coloca el texto en el centro del enlace en el eje X
-    .attr("y", d => (d.source.y + d.target.y) / 2); // Coloca el texto en el centro del enlace en el eje Y
-    
+      .attr("x", d => (d.source.x + d.target.x) / 2) // Coloca el texto en el centro del enlace en el eje X
+      .attr("y", d => (d.source.y + d.target.y) / 2); // Coloca el texto en el centro del enlace en el eje Y
   });
 
   // Habilitar arrastre de nodos
@@ -140,16 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
     d.fy = null;
   }
 
-  info();
-
-  const addNodeButton = document.getElementById("add-node-button");
-  if (addNodeButton) {
-    addNodeButton.addEventListener("click", openNodePopup);
-  }
-
-  document.getElementById("add-node-button").addEventListener("click", openNodePopup);
-
-  function openNodePopup() {
+  document.getElementById("add-node-button").addEventListener("click", () => {
     const nodeName = prompt("Ingrese el nombre del nuevo nodo:").toUpperCase();
     const duration = parseInt(prompt("Ingresa la duracion : "));
     const cost = parseInt(prompt("Ingresa costo : "));
@@ -168,14 +195,11 @@ document.addEventListener("DOMContentLoaded", function () {
       simulation.alpha(1).restart();
       updateVisualization(); // ¡Asegúrate de que esta línea esté presente!
     }
+  });
 
-  }
 
   //Eliminar Nodo
-  const deleteNodeButton = document.getElementById("delete-node-button")
-  deleteNodeButton.addEventListener("click", deleteNodePopup);
-
-  function deleteNodePopup() {
+  document.getElementById("delete-node-button").addEventListener("click", () => {
     let deleteNodeName = prompt("Ingrese el nombre del nodo a eliminar:").toUpperCase();
 
     if (!deleteNodeName) {
@@ -193,13 +217,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       updateVisualization();
     }
-  }
+  });
 
   //modificar nodo
-  const modifyNodeButton = document.getElementById("modify-node-button")
-  modifyNodeButton.addEventListener("click", modifyNodePopup);
-
-  function modifyNodePopup() {
+  document.getElementById("modify-node-button").addEventListener("click", () => {
     let modifyNodeName = prompt("Ingrese el nombre del nodo a modificar:").toUpperCase();
     const node = graphData.nodes.find(node => node.name == modifyNodeName);
     if (node) {
@@ -211,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return
     }
     updateVisualization();
-  }
+  });
 
   // Configurar el evento click para agregar aristas
   document.getElementById("add-edge-button").addEventListener("click", () => {
@@ -251,14 +272,13 @@ document.addEventListener("DOMContentLoaded", function () {
           source.prerequisites.push(target.id);
         }
 
-        graphData.links.push({ source: source.id, target: target.id });
+        graphData.links.push({ source: source, target: target });
         updateVisualization();
       }
     }
   }
 
-  const deleteLinkButton = document.getElementById("delete-edge-button")
-  deleteLinkButton.addEventListener("click", () => {
+  document.getElementById("delete-edge-button").addEventListener("click", () => {
     let sourceNodeName = prompt("Ingrese el nombre del nodo inicio del arista").toUpperCase();
     let targetNodeName = prompt("Ingrese el nombre del nodo fin del arista").toUpperCase();
 
@@ -279,10 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateVisualization()
   }
 
-  const updateLinkButton = document.getElementById("modify-edge-button")
-  updateLinkButton.addEventListener("click", updateLink)
-
-  function updateLink() {
+  document.getElementById("modify-edge-button").addEventListener("click", () => {
     const sourceNodeName = prompt("Ingrese el nombre del nodo inicio del arista a actualizar").toUpperCase();
     const targetNodeName = prompt("Ingrese el nombre del nodo fin del arista a actualizar").toUpperCase();
 
@@ -298,61 +315,14 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log(graphData.links)
 
     updateVisualization(); // Asegúrate de actualizar la visualización después de modificar los datos
-  }
-
+  });
 
   function updateVisualization() {
     for (let i = 0; i < graphData.nodes.length; i++) {
       graphData.nodes[i].id = i;
     }
-    console.log(graphData.nodes);
-    // Actualizar enlaces existentes
-    console.log(graphData.links);
-    links = linkGroup.selectAll("line")
-      .data(graphData.links);
 
-    links.exit().remove(); // Eliminar enlaces no utilizados
-
-    links = links.enter().append("line")
-      .attr("class", "link")
-      .attr("style", link_attr)
-      .attr("stroke", "#444")
-      .attr("stroke-width", 5) // Cambia el ancho de la línea si es necesario
-      .attr("marker-end", "url(#arrowhead)") // Agrega la flecha al final de la línea
-      .merge(links); // Combinar enlaces existentes y nuevos
-
-    // Actualizar nodos existentes
-    nodes = nodeGroup.selectAll("circle")
-      .data(graphData.nodes);
-
-    nodes.exit().remove(); // Eliminar nodos no utilizados
-
-    nodes = nodes.enter().append("circle")
-      .attr("r", 20)
-      .attr("class", "graph-node")
-      .attr("style", node_attr)
-      .call(d3.drag()
-        .on("start", dragStarted)
-        .on("drag", dragging)
-        .on("end", dragEnded))
-      // .on("click", nodeClicked)
-      // .on("contextmenu", nodeContextMenu) // Agregar menú contextual
-      .merge(nodes); // Combinar nodos existentes y nuevos
-
-    // Actualizar etiquetas de nodos existentes
-    nodeLabels = svg.selectAll(".node-label")
-      .data(graphData.nodes, d => `${d.name}`);
-
-    nodeLabels.exit().remove(); // Eliminar etiquetas no utilizadas
-
-    nodeLabels = nodeLabels.enter().append("text")
-      .attr("class", "node-label invisible")
-      .attr("style", nodeLabel_attr)
-      .merge(nodeLabels) // Combinar etiquetas de nodos existentes y nuevas
-      .text(d => `${d.name}`);
-
-    // Actualizar la simulación con los datos actualizados
-    info();
+    inicializationDraw();
 
     simulation.nodes(graphData.nodes);
     simulation.force("link").links(graphData.links);
@@ -417,10 +387,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // funcion para descargar el grafo actual
-  const downloadButton = document.getElementById("download-button");
-  downloadButton.addEventListener("click", downloadGraph);
-
-  function downloadGraph() {
+  document.getElementById("download-button").addEventListener("click", () => {
     let atributosNodoPermitidos = ["id", "name", "duration", "cost", "prerequisites", "postrequisites"];
     let atributosLinkPermitidos = ["source", "target"];
     let nodes = [];
@@ -459,10 +426,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(downloadAnchorNode); // required for firefox
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
-  }
+  });
 
-  const fileInput = document.getElementById("cargarBtn");
-  fileInput.addEventListener("change", (event) => {
+  document.getElementById("cargarBtn").addEventListener("change", (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -473,11 +439,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Funcion para matriz de adyacencia
-  const matrizButton = document.getElementById("matriz-button");
-  matrizButton.addEventListener("click", matrizAdyacencia);
-
-  function matrizAdyacencia() {
-
+  document.getElementById("matriz-button").addEventListener("click", () => {
     let nodes = simulation.nodes();
     let links = simulation.force("link").links();
 
@@ -492,13 +454,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     console.log("Matriz de adyacencia", matriz);
-  }
+  });
 
   // Funcion para matriz de incidencia
-  const incidenciaButton = document.getElementById("incidencia-button");
-  incidenciaButton.addEventListener("click", matrizIncidencia);
-
-  function matrizIncidencia() {
+  document.getElementById("incidencia-button").addEventListener("click", () => {
 
     let nodes = simulation.nodes();
     let links = simulation.force("link").links();
@@ -516,12 +475,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     console.log("Matriz de incidencia", matriz);
-  }
+  });
 
-  const dijkstraButton = document.getElementById("dijkstra-button");
-  dijkstraButton.addEventListener("click", dijkstra);
-
-  function dijkstra() {
+  document.getElementById("dijkstra-button").addEventListener("click", () => {
     let nodes = simulation.nodes();
     let links = simulation.force("link").links();
 
@@ -577,7 +533,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let nodeId = distancias[i];
       if (nodeId !== Infinity) {
         let node = graphData.nodes.find(node => node.id == nodeId);
-        distancias[i] = node.name;  
+        distancias[i] = node.name;
       } else {
         return
       }
@@ -585,6 +541,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log(distancias);
     console.log(distancias[nodoFinal]);
-  }
-
+  });
 });
