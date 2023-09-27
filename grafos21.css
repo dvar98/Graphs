@@ -1,29 +1,97 @@
+@media (max-width: 559px) {
+  header {
+    justify-content: center;
+  }
+
+  body main {
+    margin-bottom: 0;
+    padding: 20px;
+  }
+
+  .all-container #tools-graphic {
+    padding: 0;
+  }
+
+  /* .botones .tools-arista{
+    gap: 60px;
+  } */
+  .tools-arista div {
+    padding-bottom: 25px;
+    border-bottom: 5px dotted #000000b3;
+  }
+}
+
+@media (max-width: 1700px) {
+  html body {
+    font-size: 0.8em;
+  }
+
+  main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 20px;
+  }
+
+  main .all-container {
+    width: 100%;
+    flex-flow: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin: 0;
+  }
+
+  main #graph-container {
+    width: 100%;
+  }
+
+  main #graph-container svg {
+    padding: 10px;
+  }
+
+  main .static-archives {
+    justify-content: center;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+
+  .info {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-size: 18px;
   font-family: 'Courier New', Courier, monospace;
 }
 
+body {
+  font-size: 1em;
+}
+
 header {
-  background-color: #000000b3;
+  background-color: rgba(13, 17, 23, 0.8);
   color: white;
   padding: 30px;
   display: flex;
+  flex-wrap: wrap-reverse;
   align-items: center;
   gap: 30px;
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 2.5em;
 }
 
 .logo {
   width: 120px;
 }
 
-main{
+main {
   margin-bottom: 50px;
 }
 
@@ -32,50 +100,51 @@ main{
   gap: 15px;
   justify-content: end;
   padding: 10px 10px 0px 0px;
+  flex-wrap: wrap;
 }
 
-#archiveBtn {
-  padding: 8px;
-  border-radius: 10px;
+.archiveBtn {
+  display: none;
+}
+
+/* Estilo para el botón personalizado */
+.custom-file-input {
+  background-color: #000000b3;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 0 #ccc, 0 2px 3px rgba(0, 0, 0, .4);
+}
+
+.descagarLabel {
+  background-color: transparent;
+  border: 1px solid #000000b3;
+  color: black;
+}
+
+/* Cambia el color del botón cuando se pasa el ratón por encima */
+.custom-file-input:hover {
+  background-color: rgb(161 204 245);
+  color: black;
+}
+
+/* Cambia el color del botón cuando se hace clic */
+.custom-file-input:active {
+  background-color: #812c2cb3;
 }
 
 .all-container {
-  font-size: 1.1rem;
   display: flex;
-  justify-content: space-between;
   height: auto;
   margin: 0px 30px 0px 30px;
-}
-
-@media (max-width: 1700px) {
-  main {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .all-container {
-    margin: 10px;
-    flex-flow: wrap;
-    justify-content: center;
-  }
-
-
-  .info {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  main #graph-container {
-    width: 100%;
-  }
 }
 
 #graph-container {
   /* min-width: 600px; */
   width: 50%;
   min-height: 450px;
-  max-height: 600px;
+  max-height: 850px;
   border: 5px dotted #000000b3;
 }
 
@@ -141,26 +210,37 @@ main{
 .botones {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 50px;
 }
 
-.botones div {
+.botones div,
+.botones div h2 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
+}
 
+.tools-arista {
+  flex-direction: column;
 }
 
 .boton {
-  min-width: 300px;
+  min-width: 250px;
   padding: 20px;
   border: none;
   border-radius: 10px;
   color: white;
+  font-size: 1em;
   font-weight: bold;
   cursor: pointer;
   box-shadow: inset 1px 1px 0 #ccc, 0 2px 3px rgba(0, 0, 0, .4);
+}
+
+.boton:hover {
+  background-color: white;
+  color: black;
 }
 
 .nodo {
@@ -169,7 +249,6 @@ main{
 
 .arista {
   background-color: #9c544c;
-
 }
 
 .tooltip {
@@ -189,9 +268,8 @@ main{
 
 footer {
   padding: 50px;
-  background-color: #1f1d1d;
+  background-color: rgb(13, 17, 23);
   color: white;
-  font-size: 22px;
 }
 
 #footer .credit {
@@ -199,7 +277,7 @@ footer {
 }
 
 footer>h2 {
-  font-size: 40px;
+  font-size: 2em;
 }
 
 .integrantes {
@@ -211,7 +289,25 @@ footer>h2 {
   padding-bottom: 15px;
 }
 
+.github {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.github a {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 footer p a {
   color: wheat;
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+footer p a:hover {
+  color: white;
+  font-weight: 650;
 
 }

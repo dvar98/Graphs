@@ -13,11 +13,15 @@
 <body>
   <header>
     <img src="https://cdn-icons-png.flaticon.com/512/2103/2103658.png" class="logo">
-    <h1>Gráfos</h1>
+    <h1>Graphs</h1>
   </header>
   <main>
     <div class="static-archives">
-      <button id="download-button">Descargar</button>
+      <label for="download-button" class="custom-file-input descagarLabel">Download</label>
+      <button class="archiveBtn" id="download-button"></button>
+      <label for="cargarBtn" class="custom-file-input">
+        Upload Graph
+      </label>
       <input class="archiveBtn" type="file" id="cargarBtn" accept=".json">
     </div>
     <div class="all-container">
@@ -25,59 +29,77 @@
       <section id="tools-graphic">
         <section class="info">
           <div class="info-box" id="info-node">
-            <h2>Información Nodo</h2>
+            <h2>Node Information</h2>
             <div class="info-box-content" id="info-node-content">
               <p>id:</p>
-              <p>Nombre:</p>
+              <p>Name:</p>
               <p>Costo:</p>
-              <p>Prerequisito:</p>
-              <p>Postrequisito:</p>
-              <input type="text" name="" id="id_input">
-              <input type="text" name="" id="nombre_input">
-              <input type="text" name="" id="costo_input">
-              <input type="text" name="" id="prerequisito_input">
-              <input type="text" name="" id="postrequisito_input">
+              <p>Prerequisite:</p>
+              <p>Postrequisite:</p>
+              <input type="text" name="" id="id_input" disabled>
+              <input type="text" name="" id="nombre_input" disabled>
+              <input type="text" name="" id="costo_input" disabled>
+              <input type="text" name="" id="prerequisito_input" disabled>
+              <input type="text" name="" id="postrequisito_input" disabled>
+
             </div>
           </div>
           <div class="info-box" id="info-link">
-            <h2>Información Link</h2>
+            <h2>Edge Information</h2>
             <div class="info-box-content" id="info-link-content">
-              <p>Duración:</p>
-              <p>Nodo Inicio:</p>
-              <p>Nodo fin:</p>
-              <input type="text" name="" id="duracion_input">
-              <input type="text" name="" id="inicio_input">
-              <input type="text" name="" id="fin_input">
+              <p>Duration:</p>
+              <p>Source Node:</p>
+              <p>Target Node:</p>
+              <input type="text" name="" id="duracion_input" disabled>
+              <input type="text" name="" id="inicio_input" disabled>
+              <input type="text" name="" id="fin_input" disabled>
             </div>
           </div>
         </section>
         <div class="botones">
+          <h2>Basics Nodes</h2>
           <div class="tools-nodo">
-            <button class="boton nodo" id="add-node-button">Agregar Nodo</button>
-            <button class="boton nodo" id="delete-node-button">Eliminar Nodo</button>
-            <button class="boton nodo" id="modify-node-button">Modificar Nodo</button>
+            <button class="boton nodo" id="add-node-button">Add Node</button>
+            <button class="boton nodo" id="delete-node-button">Delete Node</button>
+            <button class="boton nodo" id="modify-node-button">Modify Node</button>
           </div>
+          <h2>Basics Edges</h2>
           <div class="tools-arista">
-            <button class="boton arista" id="add-edge-button">Agregar Arista</button>
-            <button class="boton arista" id="delete-edge-button">Eliminar Arista</button>
-            <button class="boton arista" id="modify-edge-button">Modificar Arista</button>
-            <button class="Matriz" id="matriz-button">Mostrar Matriz Adyacencia</button>
-            <button class="Matriz" id="incidencia-button">Mostrar Matriz Incidencia</button>
-            <button class="Djksitar" id="dijkstra-button">Mostrar Ruta</button>
+            <div class="basicsLinks">
+              <button class="boton arista" id="add-edge-button">Add Edge</button>
+              <button class="boton arista" id="delete-edge-button">Delete Edge</button>
+              <button class="boton arista" id="modify-edge-button">Modify Edge</button>
+            </div>
+            <h2>Matrix</h2>
+            <div class="matrices">
+              <button class="boton arista" id="matriz-button">Adjacency matrix</button>
+              <button class="boton arista" id="incidencia-button">Incidence matrix</button>
+            </div>
+            <h2>Routes</h2>
+            <div class="rutas">
+              <button class="boton arista" id="dijkstra-button">Minimum Route</button>
+              <button class="boton arista" id="dijkstra-button">Critical Route</button>
+            </div>
           </div>
         </div>
       </section>
     </div>
   </main>
   <footer>
-    <h2>Trabajo hecho por : </h2>
+    <h2>Web App developed by: </h2>
     <div class="integrantes">
       <p>Harold Burbano</p>
       <p>Andres Rey</p>
       <p>Daniel Valera</p>
       <p>Juan Silva</p>
     </div>
-    <p><a href="https://github.com/dvar98/html.git" target="_blank">GitHub</a></p>
+    <div class="github">
+      <p>
+        <a href="https://github.com/dvar98/html.git" target="_blank">
+          <img src="https://github.githubassets.com/favicons/favicon-dark.png" alt="">GitHub
+        </a>
+      </p>
+    </div>
   </footer>
 </body>
 <script src="./dto/graphData.js"></script>

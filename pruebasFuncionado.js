@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Crear el lienzo SVG para la visualización
   const svg = d3.select("#graph-container")
     .append("svg")
-    .attr("style", `width: ${width}; height: ${height}`)
+    .attr("style", `width: ${width-5}px; height: ${height-5}px;`)
 
   // Define el marcador de la flecha
   svg.append("defs").append("marker")
