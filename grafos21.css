@@ -12,9 +12,6 @@
     padding: 0;
   }
 
-  /* .botones .tools-arista{
-    gap: 60px;
-  } */
   .tools-arista div {
     padding-bottom: 25px;
     border-bottom: 5px dotted #000000b3;
@@ -23,7 +20,7 @@
 
 @media (max-width: 1700px) {
   html body {
-    font-size: 0.8em;
+    font-size: 1em;
   }
 
   main {
@@ -239,7 +236,7 @@ main {
 }
 
 .boton:hover {
-  background-color: white;
+  background-color: rgb(230, 230, 230);
   color: black;
 }
 
@@ -264,6 +261,26 @@ main {
 
 .invisible {
   pointer-events: none;
+}
+
+#matrix-container{
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+}
+
+/* Estilos para la tabla */
+table {
+  border-collapse: collapse;
+  width: 50%;
+  margin-bottom: 20px;
+}
+
+/* Estilos para las celdas de la tabla */
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
 }
 
 footer {

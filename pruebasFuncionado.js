@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Crear el lienzo SVG para la visualización
   const svg = d3.select("#graph-container")
     .append("svg")
-    .attr("style", `width: ${width-5}px; height: ${height-5}px;`)
+    .attr("style", `width: ${width - 5}px; height: ${height - 5}px;`)
 
   // Define el marcador de la flecha
   svg.append("defs").append("marker")
@@ -118,6 +118,8 @@ document.addEventListener("DOMContentLoaded", function () {
       .text(d => `${d.name}`); //Texto a colocar en el label
 
     info();
+    adjacencyMatrix();
+    incidenceMatrix();
   }
 
   // Actualizar la simulación en cada fotograma
@@ -438,8 +440,13 @@ document.addEventListener("DOMContentLoaded", function () {
     reader.readAsText(file);
   });
 
-  // Funcion para matriz de adyacencia
-  document.getElementById("matriz-button").addEventListener("click", () => {
+  //Matriz de Adyacencia
+  function adjacencyMatrix() {
+    // Elementos en HTML
+    const matrixContainer = document.getElementById("adjacency-matrix");
+    const table = document.createElement("table");
+
+    //Grafo
     let nodes = simulation.nodes();
     let links = simulation.force("link").links();
 
@@ -453,11 +460,30 @@ document.addEventListener("DOMContentLoaded", function () {
       matriz[source][target] = 1;
     });
 
-    console.log("Matriz de adyacencia", matriz);
-  });
+    // Itera sobre la matriz y crea filas y celdas
+    for (let i = 0; i < numNodes; i++) {
+      const row = document.createElement("tr");
+      for (let j = 0; j < numNodes; j++) {
+        const cell = document.createElement("td");
+        cell.textContent = matriz[i][j];
+        row.appendChild(cell);
+      }
+      table.appendChild(row);
+    }
+
+    // Agrega la tabla al contenedor
+    const existingTable = matrixContainer.querySelector("table");
+    if (existingTable) {
+      matrixContainer.removeChild(existingTable);
+    }
+    matrixContainer.appendChild(table);
+  }
 
   // Funcion para matriz de incidencia
-  document.getElementById("incidencia-button").addEventListener("click", () => {
+  function incidenceMatrix() {
+    // Elementos en HTML
+    const matrixContainer = document.getElementById("incidence-matrix");
+    const table = document.createElement("table");
 
     let nodes = simulation.nodes();
     let links = simulation.force("link").links();
@@ -474,8 +500,23 @@ document.addEventListener("DOMContentLoaded", function () {
       matriz[target][index] = -1;
     });
 
-    console.log("Matriz de incidencia", matriz);
-  });
+    // Itera sobre la matriz y crea filas y celdas
+    for (let i = 0; i < numNodes; i++) {
+      const row = document.createElement("tr");
+      for (let j = 0; j < numLinks; j++) {
+        const cell = document.createElement("td");
+        cell.textContent = matriz[i][j];
+        row.appendChild(cell);
+      }
+      table.appendChild(row);
+    }
+
+    const existingTable = matrixContainer.querySelector("table");
+    if (existingTable) {
+      matrixContainer.removeChild(existingTable);
+    }
+    matrixContainer.appendChild(table);
+  }
 
   document.getElementById("dijkstra-button").addEventListener("click", () => {
     let nodes = simulation.nodes();
