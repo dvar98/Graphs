@@ -686,7 +686,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       linkGroup.selectAll(".link")
         .filter(d => (d.source === sourceNode && d.target === targetNode) || (d.source === targetNode && d.target === sourceNode))
-        .attr("style", "stroke:#00008B; stroke-width: 10; marker-end:url(#arrowhead)");
+        .attr("style", "stroke: #FF0000; stroke-width: 10; marker-end:url(#arrowhead)");
 
       linkGroup.selectAll(".link-back")
         .filter(d => (d.source === sourceNode && d.target === targetNode) || (d.source === targetNode && d.target === sourceNode))
