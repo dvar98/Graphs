@@ -457,8 +457,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let matriz = new Array(numNodes).fill(null).map(() => new Array(numNodes).fill(0));
 
     links.forEach(link => {
-      let source = link.source.index;
-      let target = link.target.index;
+      let source = link.source.id;
+      let target = link.target.id;
       matriz[source][target] = 1;
       matriz[target][source] = 1;
     });
@@ -502,16 +502,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const table = document.createElement("table");
 
     let nodes = simulation.nodes();
-    let links = simulation.force("link").links();
+    let links = graphData.links
 
     const numNodes = nodes.length;
     const numLinks = links.length;
 
     let matriz = new Array(numNodes).fill(null).map(() => new Array(numLinks).fill(0));
 
+    console.log(links);
+
     links.forEach((link, index) => {
-      let source = link.source.index;
-      let target = link.target.index;
+      let source = link.source.id;
+      let target = link.target.id;
       matriz[source][index] = 1;
       matriz[target][index] = -1;
     });
