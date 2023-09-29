@@ -674,16 +674,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Función para resaltar el camino más corto en el grafo
   function highlightShortestPath(shortestPath) {
-    const highlightedNodes = new Set(shortestPath);
+    linkGroup.selectAll(".link").attr("style", link_attr);
+    linkGroup.selectAll(".link-back").attr("style", linkBack_attr);
 
-    nodes
-      .style("fill", node => (highlightedNodes.has(node) ? "red" : "rgb(161 204 245)"))
-      .style("stroke", node => (highlightedNodes.has(node) ? "red" : "rgb(51, 51, 51)"))
-      .style("stroke-width", node => (highlightedNodes.has(node) ? 2 : 1));
+    // Identifica los enlaces que están en la ruta más corta y cambia su estilo
+    for (let i = 0; i < shortestPath.length - 1; i++) {
+      const sourceNode = shortestPath[i];
+      const targetNode = shortestPath[i + 1];
 
-    links
-      .style("stroke", link => (highlightedNodes.has(link.source) && highlightedNodes.has(link.target) ? "red" : "#444"))
-      .style("stroke-width", link => (highlightedNodes.has(link.source) && highlightedNodes.has(link.target) ? 5 : 1));
+      linkGroup.selectAll(".link")
+        .filter(d => (d.source === sourceNode && d.target === targetNode) || (d.source === targetNode && d.target === sourceNode))
+        .attr("style", "stroke:#00008B; stroke-width: 10; marker-end:url(#arrowhead)");
+
+      linkGroup.selectAll(".link-back")
+        .filter(d => (d.source === sourceNode && d.target === targetNode) || (d.source === targetNode && d.target === sourceNode))
+        .attr("style", "cursor: pointer; stroke-width: 1; stroke: rgb(51, 51, 51); fill: rgba(0, 0, 0, 1); color:white; r:20;");
+    }
   }
 
 
