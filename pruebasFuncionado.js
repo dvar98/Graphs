@@ -436,6 +436,8 @@ document.addEventListener("DOMContentLoaded", function () {
     reader.onload = (event) => {
       graphData = JSON.parse(event.target.result);
       updateVisualization();
+      adjacencyMatrix();
+      incidenceMatrix();
     };
     reader.readAsText(file);
   });
