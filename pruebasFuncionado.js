@@ -450,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Grafo
     let nodes = simulation.nodes();
-    let links = simulation.force("link").links();
+    let links = graphData.links;
 
     const numNodes = nodes.length;
 
