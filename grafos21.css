@@ -16,6 +16,12 @@
     padding-bottom: 25px;
     border-bottom: 5px dotted #000000b3;
   }
+
+  main #matrix-container {
+    gap: 5px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 1700px) {
@@ -56,6 +62,12 @@
   .info {
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  main .second-container {
+    flex-direction: column;
+    gap: 40px;
+    margin-top: 0;
   }
 }
 
@@ -135,13 +147,15 @@ main {
   display: flex;
   height: auto;
   margin: 0px 30px 0px 30px;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 #graph-container {
   /* min-width: 600px; */
   width: 50%;
   min-height: 450px;
-  max-height: 850px;
+  max-height: 600px;
   border: 5px dotted #000000b3;
 }
 
@@ -263,10 +277,24 @@ main {
   pointer-events: none;
 }
 
-#matrix-container{
+.second-container {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+#matrix-container {
   display: flex;
   justify-content: center;
   gap: 50px;
+}
+
+#matrix-container div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
 /* Estilos para la tabla */
@@ -274,13 +302,37 @@ table {
   border-collapse: collapse;
   width: 50%;
   margin-bottom: 20px;
+  box-shadow: 0 0 20px 0px rgba(13, 17, 23, 0.3);
+  border: 2px solid #828282;
+
 }
 
 /* Estilos para las celdas de la tabla */
 td {
+  /* box-shadow: 20px 20px 20px 0px rgba(0, 0, 0, 0.2); */
   border: 1px solid #ccc;
   padding: 8px;
   text-align: center;
+
+  background-color: #fff;
+  /* Color de fondo */
+  font-size: 16px;
+  /* Tamaño de fuente */
+  color: #333;
+  /* Color de texto */
+  transition: background-color 0.3s ease;
+  /* Transición suave */
+}
+
+th {
+  background-color: #828282;
+  /* Color de fondo del encabezado */
+  color: #fff;
+  /* Color de texto del encabezado */
+  font-weight: bold;
+  /* Negrita del texto del encabezado */
+  padding: 6px 8px;
+  /* Espaciado dentro de la celda de encabezado */
 }
 
 footer {

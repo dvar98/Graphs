@@ -446,7 +446,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const matrixContainer = document.getElementById("adjacency-matrix");
     const table = document.createElement("table");
 
-    //Grafo
+    // Grafo
     let nodes = simulation.nodes();
     let links = simulation.force("link").links();
 
@@ -458,11 +458,25 @@ document.addEventListener("DOMContentLoaded", function () {
       let source = link.source.index;
       let target = link.target.index;
       matriz[source][target] = 1;
+      matriz[target][source] = 1;
     });
+
+    // Crea la primera fila con encabezados
+    const headerRow = document.createElement("tr");
+    headerRow.appendChild(document.createElement("th")); // Celda vacía en la esquina superior izquierda
+    for (let i = 0; i < numNodes; i++) {
+      const headerCell = document.createElement("th");
+      headerCell.textContent = nodes[i].name; // Puedes personalizar el encabezado
+      headerRow.appendChild(headerCell);
+    }
+    table.appendChild(headerRow);
 
     // Itera sobre la matriz y crea filas y celdas
     for (let i = 0; i < numNodes; i++) {
       const row = document.createElement("tr");
+      const nodeHeaderCell = document.createElement("th"); // Crea el encabezado de la fila
+      nodeHeaderCell.textContent = nodes[i].name; // Puedes personalizar el encabezado
+      row.appendChild(nodeHeaderCell);
       for (let j = 0; j < numNodes; j++) {
         const cell = document.createElement("td");
         cell.textContent = matriz[i][j];
@@ -479,7 +493,7 @@ document.addEventListener("DOMContentLoaded", function () {
     matrixContainer.appendChild(table);
   }
 
-  // Funcion para matriz de incidencia
+
   function incidenceMatrix() {
     // Elementos en HTML
     const matrixContainer = document.getElementById("incidence-matrix");
@@ -500,9 +514,25 @@ document.addEventListener("DOMContentLoaded", function () {
       matriz[target][index] = -1;
     });
 
+    // Crea una fila de encabezado para las aristas
+    const headerRow = document.createElement("tr");
+    headerRow.appendChild(document.createElement("th")); // Celda vacía en la esquina superior izquierda
+    for (let j = 0; j < numLinks; j++) {
+      const headerCell = document.createElement("th");
+      headerCell.textContent = links[j].source.name + ":" + links[j].target.name; // Puedes personalizar el encabezado
+      headerRow.appendChild(headerCell);
+    }
+    table.appendChild(headerRow);
+
     // Itera sobre la matriz y crea filas y celdas
     for (let i = 0; i < numNodes; i++) {
       const row = document.createElement("tr");
+
+      // Crea una celda de encabezado para el nodo
+      const nodeHeaderCell = document.createElement("th");
+      nodeHeaderCell.textContent = nodes[i].name; // Puedes personalizar el encabezado
+      row.appendChild(nodeHeaderCell);
+
       for (let j = 0; j < numLinks; j++) {
         const cell = document.createElement("td");
         cell.textContent = matriz[i][j];
@@ -511,12 +541,20 @@ document.addEventListener("DOMContentLoaded", function () {
       table.appendChild(row);
     }
 
+    // Aplicar clases de estilo a la tabla y las celdas
+    table.classList.add("incidence-table");
+    table.querySelectorAll("td").forEach(cell => {
+      cell.classList.add("incidence-cell");
+    });
+
+    // Elimina la tabla existente y agrega la nueva tabla al contenedor
     const existingTable = matrixContainer.querySelector("table");
     if (existingTable) {
       matrixContainer.removeChild(existingTable);
     }
     matrixContainer.appendChild(table);
   }
+
 
   document.getElementById("dijkstra-button").addEventListener("click", () => {
     let nodes = simulation.nodes();
