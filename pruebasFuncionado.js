@@ -555,70 +555,162 @@ document.addEventListener("DOMContentLoaded", function () {
     matrixContainer.appendChild(table);
   }
 
-
   document.getElementById("dijkstra-button").addEventListener("click", () => {
-    let nodes = simulation.nodes();
-    let links = simulation.force("link").links();
+    const startNodeName = prompt("Ingrese el nombre del nodo de inicio para Dijkstra:").toUpperCase();
+    const endNodeName = prompt("Ingrese el nombre del nodo de destino para Dijkstra:").toUpperCase();
 
-    const numNodes = nodes.length;
-    const numLinks = links.length;
+    const startNode = graphData.nodes.find(node => node.name == startNodeName);
+    const endNode = graphData.nodes.find(node => node.name == endNodeName);
 
-    let matriz = new Array(numNodes).fill(null).map(() => new Array(numNodes).fill(0));
+    if (startNode && endNode) {
+      const { shortestPath, cost } = dijkstra(graphData.nodes, graphData.links, startNode, endNode);
+      if (shortestPath !== null) {
+        const pathString = shortestPath.map(node => node.name).join(" -> ");
+        alert(`El camino más corto desde ${startNode.name} hasta ${endNode.name} es: ${pathString}\nCosto: ${cost}`);
+        highlightShortestPath(shortestPath);
+      } else {
+        alert(`No hay un camino válido desde ${startNode.name} hasta ${endNode.name}`);
+      }
+    } else {
+      alert("Nodos no encontrados. Asegúrese de ingresar nombres válidos.");
+    }
+  });
 
-    links.forEach(link => {
-      let source = link.source.index;
-      let target = link.target.index;
-      matriz[source][target] = 1;
+  // Función para ejecutar el algoritmo de Dijkstra
+  function dijkstra(nodes, links, startNode, endNode) {
+    // Inicialización de distancias y nodos visitados
+    const distances = new Map();
+    const visitedNodes = new Set();
+    const previousNodes = new Map();
+
+    nodes.forEach(node => {
+      distances.set(node, Infinity);
+      previousNodes.set(node, null);
     });
 
-    console.log(matriz);
+    distances.set(startNode, 0);
 
-    let nodoInicialName = prompt("Ingrese el nombre del nodo inicial:").toUpperCase();
-    let nodoFinalName = prompt("Ingrese el nombre del nodo final:").toUpperCase();
+    while (visitedNodes.size < nodes.length) {
+      const currentNode = getNodeWithShortestDistance(distances, visitedNodes);
+      visitedNodes.add(currentNode);
 
-    nodoInicial = graphData.nodes.findIndex(node => node.name == nodoInicialName);
-    nodoFinal = graphData.nodes.findIndex(node => node.name == nodoFinalName);
-
-
-    let distancias = new Array(numNodes).fill(Infinity);
-    let visitados = new Array(numNodes).fill(false);
-
-    distancias[nodoInicial] = 0;
-
-    for (let i = 0; i < numNodes - 1; i++) {
-      let min = Infinity;
-      let minIndex = -1;
-
-      for (let j = 0; j < numNodes; j++) {
-        if (visitados[j] === false && distancias[j] <= min) {
-          min = distancias[j];
-          minIndex = j;
-        }
+      if (currentNode === endNode) {
+        break;
       }
 
-      let u = minIndex;
-
-      visitados[u] = true;
-
-      for (let v = 0; v < numNodes; v++) {
-        if (visitados[v] === false && matriz[u][v] !== 0 && distancias[u] !== Infinity && distancias[u] + matriz[u][v] < distancias[v]) {
-          distancias[v] = distancias[u] + matriz[u][v];
-        }
-      }
-
+      updateNeighboringNodes(currentNode, links, distances, previousNodes);
     }
 
-    for (let i = 0; i < distancias.length; i++) {
-      let nodeId = distancias[i];
-      if (nodeId !== Infinity) {
-        let node = graphData.nodes.find(node => node.id == nodeId);
-        distancias[i] = node.name;
-      } else {
-        return
-      }
+    // Calcular el costo total del camino más corto
+    let currentNode = endNode;
+    let totalCost = 0;
+
+    while (currentNode !== startNode) {
+      const previousNode = previousNodes.get(currentNode);
+      const link = links.find(link => (link.source === currentNode && link.target === previousNode) || (link.source === previousNode && link.target === currentNode));
+      totalCost += link.duration;
+      currentNode = previousNode;
     }
 
-    console.log(distancias);
-    console.log(distancias[nodoFinal]);
+    // Reconstruir el camino más corto
+    const shortestPath = [];
+    currentNode = endNode;
+    while (currentNode !== null) {
+      shortestPath.unshift(currentNode);
+      currentNode = previousNodes.get(currentNode);
+    }
+
+    return { shortestPath, cost: totalCost };
+  }
+
+  // Función para obtener el nodo con la distancia más corta entre los nodos no visitados
+  function getNodeWithShortestDistance(distances, visitedNodes) {
+    let shortestDistance = Infinity;
+    let closestNode = null;
+
+    distances.forEach((distance, node) => {
+      if (!visitedNodes.has(node) && distance < shortestDistance) {
+        shortestDistance = distance;
+        closestNode = node;
+      }
+    });
+
+    return closestNode;
+  }
+
+  // Función para actualizar las distancias de los nodos vecinos
+  function updateNeighboringNodes(currentNode, links, distances, previousNodes) {
+    const neighbors = getNeighbors(currentNode, links);
+
+    neighbors.forEach(neighbor => {
+      const distance = distances.get(currentNode) + getLinkDistance(currentNode, neighbor, links);
+      if (distance < distances.get(neighbor)) {
+        distances.set(neighbor, distance);
+        previousNodes.set(neighbor, currentNode);
+      }
+    });
+  }
+
+  // Función para obtener los nodos vecinos de un nodo dado
+  function getNeighbors(node, links) {
+    const neighbors = new Set();
+    links.forEach(link => {
+      if (link.source === node) {
+        neighbors.add(link.target);
+      } else if (link.target === node) {
+        neighbors.add(link.source);
+      }
+    });
+    return Array.from(neighbors);
+  }
+
+  // Función para obtener la distancia entre dos nodos conectados por un enlace
+  function getLinkDistance(node1, node2, links) {
+    const link = links.find(link => (link.source === node1 && link.target === node2) || (link.source === node2 && link.target === node1));
+    return link ? link.duration : Infinity;
+  }
+
+  // Función para resaltar el camino más corto en el grafo
+  function highlightShortestPath(shortestPath) {
+    const highlightedNodes = new Set(shortestPath);
+
+    nodes
+      .style("fill", node => (highlightedNodes.has(node) ? "red" : "rgb(161 204 245)"))
+      .style("stroke", node => (highlightedNodes.has(node) ? "red" : "rgb(51, 51, 51)"))
+      .style("stroke-width", node => (highlightedNodes.has(node) ? 2 : 1));
+
+    links
+      .style("stroke", link => (highlightedNodes.has(link.source) && highlightedNodes.has(link.target) ? "red" : "#444"))
+      .style("stroke-width", link => (highlightedNodes.has(link.source) && highlightedNodes.has(link.target) ? 5 : 1));
+  }
+
+
+
+  document.getElementById("critical-path-button").addEventListener("click", () => {
+    const criticalPath = findCriticalPath(graphData.nodes, graphData.links);
+    if (criticalPath.length > 0) {
+      const criticalPathNames = criticalPath.map(node => node.name).join(" -> ");
+      alert(`Ruta crítica: ${criticalPathNames}`);
+    } else {
+      alert("No se encontró una ruta crítica en el grafo.");
+    }
   });
+
+  // Función para encontrar la ruta crítica en un grafo
+  function findCriticalPath(nodes, links) {
+    const startNodes = nodes.filter(node => node.prerequisites.length === 0);
+    const endNodes = nodes.filter(node => node.postrequisites.length === 0);
+
+    const criticalPath = [];
+
+    startNodes.forEach(startNode => {
+      const { shortestPath } = dijkstra(nodes, links, startNode, endNodes[0]);
+      if (shortestPath.length > criticalPath.length) {
+        criticalPath.length = 0;
+        criticalPath.push(...shortestPath);
+      }
+    });
+
+    return criticalPath;
+  }
 });
