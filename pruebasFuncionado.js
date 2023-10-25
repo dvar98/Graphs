@@ -743,7 +743,7 @@ document.addEventListener("DOMContentLoaded", function () {
       visited.add(node);
       stack.push(node);
   
-      if (node === fin) {
+      if (node === finNode.id) {
         path.push(...stack);
         return true;
       }
@@ -758,12 +758,12 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
   
-    dfs(inicio);
+    dfs(inicioNode.id);
   
     if (path.length === 0) return null;
   
     return path;
-  }
+  }  
   
   // Función para calcular la duración de la ruta crítica
   function calcularDuracionRutaCritica(rutaCritica) {
@@ -779,20 +779,15 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // Función para resaltar la ruta crítica en el grafo
   function resaltarRutaCriticaEnGrafo(rutaCritica) {
-    nodes.attr("style", node_attr); // Restablecer estilo de todos los nodos
     links.attr("style", link_attr); // Restablecer estilo de todos los enlaces
   
     for (let i = 0; i < rutaCritica.length - 1; i++) {
       const sourceId = rutaCritica[i];
       const targetId = rutaCritica[i + 1];
-  
-      const sourceNode = nodes.filter((d) => d.id === sourceId);
-      const targetNode = nodes.filter((d) => d.id === targetId);
+
       const link = links.filter((d) => d.source.id === sourceId && d.target.id === targetId);
-  
-      sourceNode.attr("style", "fill: green; stroke: black;"); // Cambiar estilo del nodo de inicio
-      targetNode.attr("style", "fill: green; stroke: black;"); // Cambiar estilo del nodo de finalización
-      link.attr("style", "stroke: green;"); // Cambiar estilo del enlace
+
+      link.attr("style", "stroke: #0BF107; stroke-width: 2px;");  // Cambiar estilo del enlace
     }
   }
 });
