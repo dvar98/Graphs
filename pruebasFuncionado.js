@@ -211,6 +211,8 @@ document.addEventListener("DOMContentLoaded", function () {
       graphData.links = graphData.links.filter(link => link.source.id !== nodeIndex && link.target.id !== nodeIndex);
 
       updateVisualization();
+      adjacencyMatrix();
+      incidenceMatrix();
     }
   });
 
@@ -226,6 +228,8 @@ document.addEventListener("DOMContentLoaded", function () {
       return
     }
     updateVisualization();
+    adjacencyMatrix();
+    incidenceMatrix();
   });
 
   // Agregar aristas
@@ -289,6 +293,8 @@ document.addEventListener("DOMContentLoaded", function () {
         deletedLink = link
       }
     });
+    adjacencyMatrix();
+    incidenceMatrix();
     updateVisualization()
     return deletedLink;
   }
@@ -309,7 +315,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const durationNewLink = parseInt(prompt(`Ingrese la duracion del link (Duracion Actual: ${deletedLink.duration})`))
     openEdgePopup(sourceNameNewLink1, sourceNameNewLink2, durationNewLink)
-
+    
+    adjacencyMatrix();
+    incidenceMatrix();
     updateVisualization(); // Asegúrate de actualizar la visualización después de modificar los datos
   });
 
@@ -450,7 +458,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Grafo
     let nodes = simulation.nodes();
-    let links = graphData.links;
+    let links = simulation.force.("links").links();
 
     const numNodes = nodes.length;
 
@@ -502,14 +510,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const table = document.createElement("table");
 
     let nodes = simulation.nodes();
-    let links = graphData.links
+    let links = simulation.force("link").links();
 
     const numNodes = nodes.length;
     const numLinks = links.length;
 
     let matriz = new Array(numNodes).fill(null).map(() => new Array(numLinks).fill(0));
-
-    console.log(links);
 
     links.forEach((link, index) => {
       let source = link.source.id;
@@ -707,20 +713,86 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Función para encontrar la ruta crítica en un grafo
-  function findCriticalPath(nodes, links) {
-    const startNodes = nodes.filter(node => node.prerequisites.length === 0);
-    const endNodes = nodes.filter(node => node.postrequisites.length === 0);
-
-    const criticalPath = [];
-
-    startNodes.forEach(startNode => {
-      const { shortestPath } = dijkstra(nodes, links, startNode, endNodes[0]);
-      if (shortestPath.length > criticalPath.length) {
-        criticalPath.length = 0;
-        criticalPath.push(...shortestPath);
+    document.getElementById("critical-path-button").addEventListener("click", () => {
+    const inicio = prompt("Ingrese el nodo de inicio de la ruta crítica:");
+    const fin = prompt("Ingrese el nodo de finalización de la ruta crítica:");
+  
+    if (!inicio || !fin) {
+      alert("Debe ingresar nodos de inicio y finalización válidos.");
+      return;
+    }
+  
+    const rutaCritica = calcularRutaCritica(inicio, fin);
+    if (rutaCritica) {
+      const duracionRutaCritica = calcularDuracionRutaCritica(rutaCritica);
+      alert(`La ruta crítica es: ${rutaCritica.join(" -> ")}, con una duración de ${duracionRutaCritica}`);
+      resaltarRutaCriticaEnGrafo(rutaCritica);
+    } else {
+      alert("No se encontró una ruta crítica entre los nodos ingresados.");
+    }
+  });
+  
+  // Función para calcular la ruta crítica
+  function calcularRutaCritica(inicio, fin) {
+    const visited = new Set();
+    const stack = [];
+    const path = [];
+  
+    // Función recursiva para encontrar la ruta crítica
+    function dfs(node) {
+      visited.add(node);
+      stack.push(node);
+  
+      if (node === fin) {
+        path.push(...stack);
+        return true;
       }
-    });
-
-    return criticalPath;
+  
+      for (const neighborId of graphData.nodes[node].postrequisites) {
+        if (!visited.has(neighborId)) {
+          if (dfs(neighborId)) return true;
+        }
+      }
+  
+      stack.pop();
+      return false;
+    }
+  
+    dfs(inicio);
+  
+    if (path.length === 0) return null;
+  
+    return path;
+  }
+  
+  // Función para calcular la duración de la ruta crítica
+  function calcularDuracionRutaCritica(rutaCritica) {
+    let duracionTotal = 0;
+    for (let i = 0; i < rutaCritica.length - 1; i++) {
+      const sourceNode = graphData.nodes[rutaCritica[i]];
+      const targetNode = graphData.nodes[rutaCritica[i + 1]];
+      const link = graphData.links.find((l) => l.source === sourceNode && l.target === targetNode);
+      duracionTotal += link.duration;
+    }
+    return duracionTotal;
+  }
+  
+  // Función para resaltar la ruta crítica en el grafo
+  function resaltarRutaCriticaEnGrafo(rutaCritica) {
+    nodes.attr("style", node_attr); // Restablecer estilo de todos los nodos
+    links.attr("style", link_attr); // Restablecer estilo de todos los enlaces
+  
+    for (let i = 0; i < rutaCritica.length - 1; i++) {
+      const sourceId = rutaCritica[i];
+      const targetId = rutaCritica[i + 1];
+  
+      const sourceNode = nodes.filter((d) => d.id === sourceId);
+      const targetNode = nodes.filter((d) => d.id === targetId);
+      const link = links.filter((d) => d.source.id === sourceId && d.target.id === targetId);
+  
+      sourceNode.attr("style", "fill: green; stroke: black;"); // Cambiar estilo del nodo de inicio
+      targetNode.attr("style", "fill: green; stroke: black;"); // Cambiar estilo del nodo de finalización
+      link.attr("style", "stroke: green;"); // Cambiar estilo del enlace
+    }
   }
 });
