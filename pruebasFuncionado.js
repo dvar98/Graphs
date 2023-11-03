@@ -293,9 +293,9 @@ document.addEventListener("DOMContentLoaded", function () {
         deletedLink = link
       }
     });
+    updateVisualization();
     adjacencyMatrix();
     incidenceMatrix();
-    updateVisualization()
     return deletedLink;
   }
 
@@ -315,10 +315,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const durationNewLink = parseInt(prompt(`Ingrese la duracion del link (Duracion Actual: ${deletedLink.duration})`))
     openEdgePopup(sourceNameNewLink1, sourceNameNewLink2, durationNewLink)
-    
+
+    updateVisualization();
     adjacencyMatrix();
-    incidenceMatrix();
-    updateVisualization(); // Asegúrate de actualizar la visualización después de modificar los datos
+    incidenceMatrix(); 
+    // Asegúrate de actualizar la visualización después de modificar los datos
   });
 
   function updateVisualization() {
@@ -458,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Grafo
     let nodes = simulation.nodes();
-    let links = simulation.force("links").links();
+    let links = simulation.force("link").links();
 
     const numNodes = nodes.length;
 
@@ -703,17 +704,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   document.getElementById("critical-path-button").addEventListener("click", () => {
-    const criticalPath = findCriticalPath(graphData.nodes, graphData.links);
-    if (criticalPath.length > 0) {
-      const criticalPathNames = criticalPath.map(node => node.name).join(" -> ");
-      alert(`Ruta crítica: ${criticalPathNames}`);
-    } else {
-      alert("No se encontró una ruta crítica en el grafo.");
-    }
-  });
-
-  // Función para encontrar la ruta crítica en un grafo
-    document.getElementById("critical-path-button").addEventListener("click", () => {
     const inicio = prompt("Ingrese el nodo de inicio de la ruta crítica:");
     const fin = prompt("Ingrese el nodo de finalización de la ruta crítica:");
   
@@ -737,6 +727,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const visited = new Set();
     const stack = [];
     const path = [];
+  
+    // Verificar si los nodos de inicio y finalización existen
+    const inicioNode = graphData.nodes.find(node => node.name === inicio);
+    const finNode = graphData.nodes.find(node => node.name === fin);
+  
+    if (!inicioNode || !finNode) {
+      alert("Los nodos de inicio y finalización deben ser válidos.");
+      return null;
+    }
   
     // Función recursiva para encontrar la ruta crítica
     function dfs(node) {
