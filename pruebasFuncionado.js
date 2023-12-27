@@ -787,7 +787,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const link = links.filter((d) => d.source.id === sourceId && d.target.id === targetId);
 
-      link.attr("style", "stroke: #0BF107; stroke-width: 2px;");  // Cambiar estilo del enlace
+      link.attr("style", "stroke: #0BF107; stroke-width: 5px;");  // Cambiar estilo del enlace
     }
   }
 });
