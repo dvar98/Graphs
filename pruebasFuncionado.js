@@ -407,7 +407,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     graphData.nodes.forEach(element => {
-      nodes.push.(filtrarAtributos(element, atributosNodoPermitidos));
+      nodes.push(filtrarAtributos(element, atributosNodoPermitidos));
     });
 
     graphData.links.forEach(element => {
