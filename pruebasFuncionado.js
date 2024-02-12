@@ -463,7 +463,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const numNodes = nodes.length;
 
-    let matriz = new Array(numNodes).fill(null).map(() => new Array(numNodes).fill(75));
+    let matriz = new Array(numNodes).fill(null).map(() => new Array(numNodes).fill(0));
 
     links.forEach(link => {
       let source = link.source.id;
